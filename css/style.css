@@ -1,4 +1,5 @@
-@import url("//fonts.googleapis.com/css?family=Lato:400,400italic");
+@import url("http://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,900,900italic,300italic,300");
+@import url("http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,700");
 @font-face {
   font-family: 'FontAwesome';
   font-style: normal;
@@ -12,7 +13,7 @@
 body {
   background: #eee;
   color: #444;
-  font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 14px;
   text-shadow: 0 0 1px transparent;
 }
@@ -32,7 +33,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: "Roboto Slab", serif;
 }
 h1 {
   font-size: 1.8em;
@@ -106,7 +107,7 @@ a:hover {
   margin: 50px auto;
 }
 #header a {
-  color: #999;
+  color: inherit;
 }
 #header a:hover {
   color: #258fb8;
@@ -116,15 +117,26 @@ a:hover {
   font-weight: normal;
   font-size: 2.5em;
   line-height: 1;
+  color: #333;
+}
+#header h1 small {
+  font-size: 50%;
+  margin-top: 0.5em;
+  color: #666;
+  display: block;
+  letter-spacing: 0.25em;
 }
 #header h2 {
   font-weight: normal;
-  font-size: 0.9em;
+  font-size: 1.5em;
   line-height: 1;
   margin-top: 10px;
+  padding-left: 1em;
+  color: #666;
+  letter-spacing: 0.25em;
 }
 #header #main-nav {
-  font-family: "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: "Roboto Slab", serif;
   line-height: 2.5em;
 }
 #header #main-nav ul {
@@ -258,7 +270,7 @@ article header .icon:before {
 }
 article header time {
   color: #999;
-  font: 0.9em "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font: 0.9em "Roboto Slab", serif;
   margin-bottom: 5px;
   display: block;
   line-height: 1;
@@ -295,7 +307,7 @@ article .entry blockquote {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   font-style: italic;
-  font-family: "Georgia", serif;
+  font-family: "Roboto Slab", serif;
   font-size: 1.2em;
   padding: 0 30px 15px;
   text-align: center;
@@ -494,7 +506,7 @@ article footer .addthis iframe {
   padding: 5px 10px;
   background: #ddd;
   color: #999;
-  font-family: "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: "Roboto Slab", serif;
   text-shadow: 0 0 1px #fff;
   margin-bottom: 50px;
 }
@@ -593,7 +605,7 @@ article footer .addthis iframe {
 }
 #sidebar .search input {
   background: #fff;
-  font-family: "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: "Roboto Slab", serif;
   font-style: italic;
   font-size: 1em;
   padding: 10px 15px;
@@ -641,7 +653,7 @@ article footer .addthis iframe {
 #footer {
   color: #999;
   margin-bottom: 50px;
-  font: 0.9em/1.6 "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font: 0.9em/1.6 "Roboto Slab", serif;
   text-shadow: 0 0 1px #fff;
 }
 .entry .gist {
