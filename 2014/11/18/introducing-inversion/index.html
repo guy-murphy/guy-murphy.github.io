@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>First post! | Weird Scenes Inside The Goldmine</title>
+  <title>Introducing inversion. | Weird Scenes Inside The Goldmine</title>
   <meta name="author" content="Guy Murphy">
   
-  <meta name="description" content="So this is always the intimidating part of a development blog… the first post. There are few things more pity-worthy than a blog with “Hello World” fo">
+  <meta name="description" content="Conclave originally began life around 2004 as a .NET CMS built around topicmaps, and influenced heavily by the WikiWikiWeb. It was a lot of fun but a ">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="First post!"/>
+  <meta property="og:title" content="Introducing inversion."/>
   <meta property="og:site_name" content="Weird Scenes Inside The Goldmine"/>
 
   
@@ -53,20 +53,21 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-11-14T02:51:56.000Z"><a href="/2014/11/14/first-post/">Nov 14 2014</a></time>
+        <time datetime="2014-11-18T03:15:01.000Z"><a href="/2014/11/18/introducing-inversion/">Nov 18 2014</a></time>
       
       
   
-    <h1 class="title">First post!</h1>
+    <h1 class="title">Introducing inversion.</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>So this is always the intimidating part of a development blog… the first post. There are few things more pity-worthy than a blog with “Hello World” followed by “First post!”, but you’ve got to start somewhere.</p>
-<p>I haven’t kept a development blog since 2002, and although I was reasonably busy with blogging, it obviously never made me famous. I used to use my own CMS for blogging, and because I work largely with content management I began to feel if a blog wasn’t using my own software I was somehow a fraud. I’ve written my fair share of blogging features for company platforms, but like the anecdotal builder who just never gets around to their own home improvements because they’re busy working on other peoples homes, so went my blogging.</p>
-<p>I’d long gotten into the habit of keeping development notes in markdown in the form of <a href="https://github.com/guy-murphy/conclave-public/blob/master/readme.md" target="_blank" rel="external">git repo readme files</a> and used in conjunction with a hacked together <a href="https://github.com/guy-murphy/conclave-public/tree/master/Conclave.Documentation.Generator" target="_blank" rel="external">document generator</a> that transforms .NET XML API docs into Markdown, it makes for not utterly embarrassing technical documentation. This isn’t very accessible for anybody other than devs working with the repo quite obviously.</p>
-<p>So I decided that with <a href="https://pages.github.com/" target="_blank" rel="external">GitHub pages</a> there really is no reason not to have a blog for ongoing development notes especially when one take a look at the wide range of quality markdown based <a href="https://www.staticgen.com/" target="_blank" rel="external">static site generators</a> which work really well with git deployments. I wanted a Node based platform as a lot of the Ruby ones use Bunlder and I’ve had problems with bundler on this Windows workstation. So after a lot of browsing of different generators, I settled on <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>. It’s easy to hack, has reasonable themes as a starting point and seems to be well supported. It may not be my final resting place, I might even finally get around to a static site generator for <a href="https://github.com/guy-murphy/conclave-public" target="_blank" rel="external">Conclave</a>, but markdown is easy to migrate so there’s no reason not to get started with this now.</p>
+        <p><a href="https://github.com/guy-murphy/conclave-public" target="_blank" rel="external">Conclave</a> originally began life around 2004 as a .NET CMS built around <a href="http://en.wikipedia.org/wiki/Topic_Maps" target="_blank" rel="external">topicmaps</a>, and influenced heavily by the <a href="http://c2.com/cgi/wiki/wiki?WikiWikiWeb" target="_blank" rel="external">WikiWikiWeb</a>. It was a lot of fun but a personal side project, and was a little slow and clunky.</p>
+<p>The next incarnation in 2006 was Acumen a .NET MVC web-application framework and CMS built with a team in Spain. Multi-tenant, multi-lingual and driving a couple of dozen public facing and internal extranet applications, Acumen was so much fun to develop and an incredible learning experience.</p>
+<p>More recently in 2011 I began working on a behaviour oriented framework the purpose of which was to replace MVC within Conclave, so that feature-set just got rolled into Conclave. This left Conclave very schizophrenic and almost impossible to explain to any uninvolved person. Conclave simply seemed to be too many things.</p>
+<p>So. The behavioural composition malarkey has been taken out of Conclave and is now <a href="https://github.com/guy-murphy/inversion-dev" target="_blank" rel="external">Inversion</a>. Conclave.CMS and Conclave.Funder will then simply be applications that use Inversion rather than being joined at the hip. This it is hoped will help keep our separation of concerns a little more honest.</p>
+<p>Over the course of the Winter I’ll write some more about Inversion and it’s design goals.</p>
 
       
     </div>
@@ -78,7 +79,7 @@
       
   
   <div class="tags">
-    <a href="/tags/blog/">blog</a>
+    <a href="/tags/inversion/">inversion</a>
   </div>
 
       <div class="clearfix"></div>
