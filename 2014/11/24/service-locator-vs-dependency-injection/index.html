@@ -3,13 +3,16 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Weird Scenes Inside The Goldmine</title>
+  <title>Service locator vs dependency injection. | Weird Scenes Inside The Goldmine</title>
   <meta name="author" content="Guy Murphy">
+  
+  <meta name="description" content="I much enjoyed reading a piece by on service location vs dependency injectionn which chimed with some of my own thoughts overs the years.
+The article ">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="Service locator vs dependency injection."/>
   <meta property="og:site_name" content="Weird Scenes Inside The Goldmine"/>
 
   
@@ -45,8 +48,7 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-  <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
   <div class="post-content">
     <header>
@@ -56,7 +58,7 @@
       
       
   
-    <h1 class="title"><a href="/2014/11/24/service-locator-vs-dependency-injection/">Service locator vs dependency injection.</a></h1>
+    <h1 class="title">Service locator vs dependency injection.</h1>
   
 
     </header>
@@ -138,194 +140,17 @@
 </article>
 
 
+<section id="comment">
+  <h1 class="title">Comments</h1>
 
-
-  <article class="post">
   
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-11-18T03:15:01.000Z"><a href="/2014/11/18/introducing-inversion/">Nov 18 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/11/18/introducing-inversion/">Introducing Inversion.</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p><a href="https://github.com/guy-murphy/conclave-public" target="_blank" rel="external">Conclave</a> originally began life around 2004 as a .NET CMS built around <a href="http://en.wikipedia.org/wiki/Topic_Maps" target="_blank" rel="external">topicmaps</a>, and influenced heavily by the <a href="http://c2.com/cgi/wiki/wiki?WikiWikiWeb" target="_blank" rel="external">WikiWikiWeb</a>. It was a lot of fun but a personal side project, and was a little slow and clunky.</p>
-<p>The next incarnation in 2006 was Acumen a .NET MVC web-application framework and CMS built with a team in Spain. Multi-tenant, multi-lingual and driving a couple of dozen public facing and internal extranet applications, Acumen was so much fun to develop and an incredible learning experience.</p>
-<p>More recently in 2011 I began working on a behaviour oriented framework the purpose of which was to replace MVC within Conclave, so that feature-set just got rolled into Conclave. This left Conclave very schizophrenic and almost impossible to explain to any uninvolved person. Conclave simply seemed to be too many things.</p>
-<p>So. The behavioural composition malarkey has been taken out of Conclave and is now <a href="https://github.com/guy-murphy/inversion-dev" target="_blank" rel="external">Inversion</a>. Conclave.CMS and Conclave.Funder will then simply be applications that use Inversion rather than being joined at the hip. This it is hoped will help keep our separation of concerns a little more honest.</p>
-<p>Over the course of the Winter I’ll write some more about Inversion and it’s design goals.</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      
-  
-  <div class="tags">
-    <a href="/tags/inversion/">inversion</a>
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
-
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="link">
   
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-11-14T06:52:05.000Z"><a href="/2014/11/14/faking-data/">Nov 14 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/11/14/faking-data/">Faking data with Faker.js and Chance.js</a></h1>
-  
+</section>
 
-    </header>
-    <div class="entry">
-      
-        <p>I’m increasingly favouring a data-first approach to new applications. By this I mean take a candidate data-model and then bulk out a database with a silly quantity of fake data. Test all your core or risky queries and kick the tires on your indexes, know that it will work, and then start looking to build out your application on a firm foundation. There’s no point waiting until the end to test capacity and performance, as by then it’s way too late.</p>
-<p>The advantage of this approach is as you’re building out the app you have realistic data to work with. Producing realistic looking fake data quickly loses its appeal, and for non-trivial models ends up not looking so realistic. So I did some digging around and came across <a href="https://github.com/marak/Faker.js/" target="_blank" rel="external">Faker.js</a> and <a href="http://chancejs.com/" target="_blank" rel="external">Chance.js</a>. Between the two of them, they make producing quick and dirty instances of a model easy.</p>
-<p>So I have a little Node.js http service that sends back as a response a JSON representation of a model instance complete with fake data, and then on the .NET you use a bulk loader to read these instances into your database of choice.</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">createProjectAgents</span><span class="params">(id)</span> </span>{</div><div class="line"><span class="pi">    'use strict'</span>;</div><div class="line">    <span class="keyword">var</span> agents = chance.n(</div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>{</div><div class="line">            <span class="keyword">var</span> agentId = chance.guid();</div><div class="line">            <span class="keyword">return</span> {</div><div class="line">                _type: <span class="string">'agents'</span>,</div><div class="line">                <span class="keyword">for</span>: id,</div><div class="line">                scope: <span class="string">'project'</span>,</div><div class="line">                role: chance.pick([<span class="string">'admin'</span>, <span class="string">'advisor'</span>, <span class="string">'consultant'</span>, <span class="string">'advocate'</span>]),</div><div class="line">                who: agentId,</div><div class="line">                agent: createAgent(agentId)</div><div class="line">            };</div><div class="line">        },</div><div class="line">        chance.integer({</div><div class="line">            min: <span class="number">0</span>,</div><div class="line">            max: <span class="number">3</span></div><div class="line">        })</div><div class="line">    );</div></pre></td></tr></table></figure>
-
-<p>Take a gander at the docs, a single snippet doesn’t do them justice. It’s the broad coverage of dozens of functions like <code>faker.address.streetAddress()</code> or <code>faker.phone.phoneNumber()</code> that are the difference between some quick and dirty scripting or a chunk or work that just doesn’t seem worth it.</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      
-  
-  <div class="tags">
-    <a href="/tags/tools/">tools</a>
-  </div>
-
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-11-14T02:51:56.000Z"><a href="/2014/11/14/first-post/">Nov 14 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/11/14/first-post/">First post!</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>So this is always the intimidating part of a development blog… the first post. There are few things more pity-worthy than a blog with “Hello World” followed by “First post!”, but you’ve got to start somewhere.</p>
-<p>I haven’t kept a development blog since 2002, and although I was reasonably busy with blogging, it obviously never made me famous. I used to use my own CMS for blogging, and because I work largely with content management I began to feel if a blog wasn’t using my own software I was somehow a fraud. I’ve written my fair share of blogging features for company platforms, but like the anecdotal builder who just never gets around to their own home improvements because they’re busy working on other peoples homes, so went my blogging.</p>
-<p>I’d long gotten into the habit of keeping development notes in markdown in the form of <a href="https://github.com/guy-murphy/conclave-public/blob/master/readme.md" target="_blank" rel="external">git repo readme files</a> and used in conjunction with a hacked together <a href="https://github.com/guy-murphy/conclave-public/tree/master/Conclave.Documentation.Generator" target="_blank" rel="external">document generator</a> that transforms .NET XML API docs into Markdown, it makes for not utterly embarrassing technical documentation. This isn’t very accessible for anybody other than devs working with the repo quite obviously.</p>
-<p>So I decided that with <a href="https://pages.github.com/" target="_blank" rel="external">GitHub pages</a> there really is no reason not to have a blog for ongoing development notes especially when one take a look at the wide range of quality markdown based <a href="https://www.staticgen.com/" target="_blank" rel="external">static site generators</a> which work really well with git deployments. I wanted a Node based platform as a lot of the Ruby ones use Bunlder and I’ve had problems with bundler on this Windows workstation. So after a lot of browsing of different generators, I settled on <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>. It’s easy to hack, has reasonable themes as a starting point and seems to be well supported. It may not be my final resting place, I might even finally get around to a static site generator for <a href="https://github.com/guy-murphy/conclave-public" target="_blank" rel="external">Conclave</a>, but markdown is easy to migrate so there’s no reason not to get started with this now.</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      
-  
-  <div class="tags">
-    <a href="/tags/blog/">blog</a>
-  </div>
-
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-11-13T22:54:49.000Z"><a href="/2014/11/13/hello-world/">Nov 13 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/11/13/hello-world/">Hello World</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">trobuleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2>
-<h3 id="Create_a_new_post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-<nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav></div></div>
+</div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
@@ -373,7 +198,7 @@ var disqus_shortname = 'guy-murphy';
   var dsq = document.createElement('script');
   dsq.type = 'text/javascript';
   dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 }());
 </script>

@@ -56,6 +56,100 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2014-11-24T14:11:48.000Z"><a href="/2014/11/24/service-locator-vs-dependency-injection/">Nov 24 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/11/24/service-locator-vs-dependency-injection/">Service locator vs dependency injection.</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>I much enjoyed reading <a href="http://candordeveloper.com/2013/04/10/dependency-injection-is-over-hyped/" target="_blank" rel="external">a piece by on service location vs dependency injectionn</a> which chimed with some of my own thoughts overs the years.</p>
+<p>The article starts with a quote by Martin Fowler, the brilliant man whose brilliant work has given rise to so many cargo-cult practices in the .NET development community. I say “cargo-cult” as I’m implying unreasoned and absolute application of a single principle, to the exclusion of any nuance. It’s worth reading Fowler’s piece as it’s a very balanced take on the subject and not absolutist.</p>
+<pre><code>[<span class="link_label">Martin Fowler</span>](<span class="link_url">http://martinfowler.com/articles/injection.html</span>) The choice between Service Locator and Dependency Injection is less important than the principle of separating service configuration from the use of services within an application.
+</code></pre><p>Architecturally <a href="https://github.com/guy-murphy/inversion-dev" target="_blank" rel="external">Inversion</a> expresses service location, and it avoids any explicit use of dependency injection (DI) while at the same time assuming considerable use of DI by application developers. Given this I thought some brief word on “why” might be useful, while adding my voice of concern about the over use of DI.</p>
+<p><a href="https://github.com/guy-murphy/inversion-dev" target="_blank" rel="external">Inversion</a> favours the use of <a href="http://springframework.net/" target="_blank" rel="external">Spring</a> as it’s IoC container, and XML configuration. I’ve long intended to try out <a href="http://autofac.org/" target="_blank" rel="external">autofac</a> as it too apparently has good XML config support. As long as it has good XML config support and performs reasonably well I really don’t care which container I use, because for me the primary requirement is a config notation so I can decouple my config from service use and binary deploys, and so that I can easily manage configuration for an application in different instances.</p>
+<p>This core issue seems to get thrown out with the bath-water in near all DI using solutions I have seen in the wild. Why? Because we had a bunch of people write that service locators are an anti-pattern. Like a lot, if it passed by your notice Google <a href="https://www.google.co.uk/#q=service+locator+is+an+anti+pattern" target="_blank" rel="external">“service locator anti pattern”</a>, pick a couple of pieces and read at random for 15 min.</p>
+<p>Most of the core arguments regarding service location as an anti-pattern stress the pitfall of runtime rather than compile-time errors caused by failure to fulfill dependency requirements. This is compounded by the dependency graph being buried in implementation code. These are valid concerns, but the counter application as a blanket absolute I feel leads developers into more pitfalls than it avoids. </p>
+<p>The emphasis on compile-time errors in this argument leads the developer to favour statically-compiled container configuration, and in most cases the fluent interfaces that are emphasised by modern IoC containers. Without exception in any case I’ve observed this leads to Martin Fowler’s chief concern getting throw out with the bathwater.</p>
+<pre><code>separating service configuration <span class="built_in">from</span> <span class="operator">the</span> use <span class="operator">of</span> services <span class="operator">within</span> <span class="operator">an</span> application
+</code></pre><p>There are other more insidious issues introduced with the assumption of pervasive DI use.</p>
+<h2 id="Abusing_constructors_rather_than_abstracting">Abusing constructors rather than abstracting</h2>
+<p>At a very simple level, most examples of DI vs service location assume constructor injection. This is for the valid reason of ensuring the object is instantiated with all it’s dependencies fulfilled, and this is the fig leaf we use to explain this approach. The truth is a little buried anti-pattern in itself.</p>
+<p>Dependencies will often vary for different implementations, so what we need to inject varies. The constructor is effectively a big gaping hole in a types interface contract. We can run anything we want through there, and they can vary between implementations. So rather than abstract our dependencies we just throw them through the contructor. This is not a virtue.</p>
+<p>In the world of .NET Blog Driven Development combined with MVC.NET and Entity Framework this leads over the course of years almost inexorably to the magic tarball of a dependency graph with all the things touching all the things and the contructor being the means by which we communicate relationships between objects.</p>
+<h2 id="Assumptions_about_state">Assumptions about state</h2>
+<p>This abuse of constructors as a hole through our interfaces leads us to another problem.</p>
+<p>It makes a huge assumption about the state of my type, and will almost compel inexperienced developers to inflict state upon types that don’t need it. We without thought turn a <strong>uses-a</strong> relationship into a <strong>has-a</strong> relationship and ensure we can’t use singletons where appropriate, and steers us away from a swathe of compositional patterns.</p>
+<p>This is a big deal for performance in web-applications, and almost ensures while we model relationships between data entities, we don’t model behavioural relationships between objects or pay much of any attention toward how objects use each other.</p>
+<h2 id="Writing_assemblies_to_be_consumed_by_others">Writing assemblies to be consumed by others</h2>
+<p>The flaming strawman of a horror story that the notion of an anti-pattern is built on is the story of shipping an assembly to a third-party that’s using a service locator, with a dependency that isn’t fulfilled in the config, causing a runtime error that isn’t easy for the consumer to resolve as the dependency is expressed in configuration code.</p>
+<p>I call this a strawman as using a service locator in this way for a shipping lib is a complete non-starter. The concern is applicable for any low-level or foundation assembly (as most of us are not shipping libs).</p>
+<p><a href="https://github.com/guy-murphy/conclave-public/tree/master/Conclave.Map" target="_blank" rel="external">Conclave.Map</a> and related assemblies have no notion of a service container or locator. It’s part of a data-access layer, and service location is none of its business. Nobody in their right mind is going to suggest injecting a service locator into something that isn’t participating in a component model.</p>
+<p>In WinForms a service container is threaded through all the components, because they are participating in a component model. The IO namespaces aren’t because they’re not participating in a component model.</p>
+<p>Yes, there are a whole bunch of concerns that should not be addressing service location. There’s a whole bunch of types that shouldn’t have access to the application config at all, that should be agnostic to their environment. Your data access layer probably shouldn’t know anything about HTML or CSS… but that does not make HTML and CSS anti-patterns, it is simply to know that as professionals we make judgment about how we partition concerns within our application while being mindful of principles like <a href="http://en.wikipedia.org/wiki/Law_of_Demeter" target="_blank" rel="external">The Law of Demeter</a> we understand we need to manage carefully the coupling between types.</p>
+<p>There’s lots of places you shouldn’t be passing a database connection. There’s lots of places you shouldn’t be passing a service locator because it’s not appropriate for the type to be considering anything other than what it’s tasked to do. If however a types responsibility is coordinating between services, and providing application integration with services, then service location is a perfectly reasonable concern, and trying to pretend otherwise because somebody called it an anti-pattern will bend you application our of shape.</p>
+<h2 id="Patterns_are_not_universally_applicable_articles_of_faith">Patterns are not universally applicable articles of faith</h2>
+<p>Patterns are not <a href="http://en.wikipedia.org/wiki/Catechism" target="_blank" rel="external">catechisms</a>, and they do not direct a moral imperative. Patterns offer solutions to common problems and bring with them their own consequence that will vary between scenarios of application.</p>
+<p>Consider message queues. Not unlike service locators they introduce a fire-break of an interface decoupling, taking a lot of of stuff that used to happen <em>here</em> and by whatever means makes it happen over <em>there</em>. Quite where or how often isn’t the business of the application developer looking at one end of it.</p>
+<p>Should we wire in a service locator into a low level PDF library that is not participating in a component model? Probably not, for all the same reasons we probably shouldn’t wire in a message queue.</p>
+<p>Is this to say then that message queues are an anti-pattern? No, it’s to say you’re a muppet if you wire a domestic power cable from the wall outlet into your wrist-watch to power it. Not because domestic power cables and wall outlets are bad or antithetical, but because if you insist on wiring in power cables in <em>inappropriate</em> ways, you’re going to get an electric shock and will probably render your watch inoperable.</p>
+<p>Take 3 Java developers and 3 .NET developers to an imaginary bar in our heads. They’re going to write down as exhaustive list of all the ways in which it is appropriate or inappropriate to use a message queue. Once the Java and .NET devs are done introduce 3 Erlang developers, and there’s going to be a bar fight. This is because an Erlang developer is going to have a completely different architectural take on where it is appropriate to use messaging.</p>
+<p>This might seem a bit of a contrived example unless you are a .NET developer using <a href="https://rx.codeplex.com/" target="_blank" rel="external">Rx.NET</a> or <a href="http://msdn.microsoft.com/en-us/library/hh228603(v=vs.110" target="_blank" rel="external">DataFlow</a>.aspx) in anger. In which case your notions of inter-object communication is probably drifting slowly toward the Erlang chaps and you might surprise your peers by joining the Erlang devs in the ensuing ruck. Further shocking the Java devs when one of their own screams “Scala!” and turns on them… Now throw in 3 Haskel devs and all bets are off. They’re likely to label your whole type-system an anti-pattern… When we look under the table we find a Rails dev rocking themselves whimpering “I just want to build awesome websites”.</p>
+<p>As a .NET dev I may favour compile time errors over runtime errors more than say a Python or Ruby developer, but <em>if I am creating a component model that composes at runtime</em>, and I try and eliminate runtime errors as a blanket architectural rule, then I am likely to bend my architecture out of shape.</p>
+<h2 id="Using_a_process_context_for_service_location">Using a process context for service location</h2>
+<p>So how does <a href="https://github.com/guy-murphy/inversion-dev" target="_blank" rel="external">Inversion</a> and <a href="https://github.com/guy-murphy/conclave-public" target="_blank" rel="external">Conclave</a> approach this? Hopefully with a sense of balance, and an awareness of when the focus is service location and when the focus is dependency injection, with a cut between the two at the appropriate layer for the application to separate its concerns.</p>
+<p>Inversion centres around <a href="https://github.com/guy-murphy/inversion-dev/blob/master/Inversion.Process/ProcessContext.cs" target="_blank" rel="external">process context</a> in much the same way that an ASP.NET application will centre around a <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontext(v=vs.110" target="_blank" rel="external">HttpContext</a>.aspx). This context is used to manage state for a running process and to mediate with actors and resources external to the application. The process context is also responsible for mediating between units of application and business logic, coordinating their activity.</p>
+<p>The context <strong>has-a</strong> service container, which is injected in it’s constructor. This interface is held for all process context implementations. If I could specify the constructor on the interface I would (I might take a closer look at the MS design by contract library for .NET).</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="title">ProcessContext</span>(IServiceContainer services) {</div><div class="line">    _serviceContainer = services;</div><div class="line">    <span class="comment">// snip</span></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>The context exposes this service container thus…</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> IServiceContainer Services {</div><div class="line">    <span class="keyword">get</span> { <span class="keyword">return</span> _serviceContainer; }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>Now, slightly more controversial is the interface for <code>IServiceContainer</code>.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">interface</span> IServiceContainer : IDisposable {</div><div class="line">    T GetService&lt;T&gt;(<span class="keyword">string</span> name);</div><div class="line">    <span class="keyword">bool</span> ContainsService(<span class="keyword">string</span> name);</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>This is perhaps slightly controversial as its getting services by name rather than by type. This is because at this level the concern is service location via a generalised component interface. If the service container being used supports DI (and it will), injection is configuration level concern. The component isn’t going to inflict it’s dependency upon the application architecture. At all. DI is held as an implementation detail, supporting service object.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Action</span>(IEvent ev, ProcessContext context) {</div><div class="line">    <span class="keyword">if</span> (ev.HasRequiredParams(<span class="string">"id"</span>)) {</div><div class="line">        <span class="keyword">using</span> (ITopicStore store = context.Services.GetObject&lt;ITopicStore&gt;(<span class="string">"store::topic-map"</span>)) {</div><div class="line">            store.Start();</div><div class="line">            Topic topic = store.GetTopic(ev[<span class="string">"id"</span>]);</div><div class="line">            context.ControlState[<span class="string">"topic"</span>] = topic;</div><div class="line">            ev.Object = topic;</div><div class="line">            <span class="keyword">if</span> (topic == Topic.Blank) {</div><div class="line">                context.Errors.CreateMessage(<span class="keyword">string</span>.Format(<span class="string">"The topic '{0}' does not exist."</span>, ev[<span class="string">"id"</span>]));</div><div class="line">            }</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>So here we have the action of an <a href="https://github.com/guy-murphy/inversion-dev/blob/master/Inversion.Process/IProcessBehaviour.cs" target="_blank" rel="external">IProcessBehaviour</a>. It uses the same interface as all process behaviours, it’s not a special little snowflake, and plugs into the architecture the same as every other component.</p>
+<p>Crucially… this behaviour <strong>uses</strong> a context which <strong>has</strong> a service locator which this behaviour <strong>uses</strong> to obtain a topic store.</p>
+<p>The behaviour, and all the other behaviours like it have naff all. The process context has everything. Any immutable config for the behaviour is injected by the service container from which the behaviour is obtained, and is a config level concern that remains the business of the behaviours author and for them to worry about. DI in this away is not the business, nor the concern of the framework. Service location is, and is provided via an interface on the context that can be implemented inside 10 minutes as a dictionary of lambdas if you had a pressing need.</p>
+<h2 id="Service_location_and_dependency_injection_are_different_things">Service location and dependency injection are different things</h2>
+<p>Obtaining a manifest from a database at runtime of service component names that conform to a generalised interface, obtaining them from the service container by name, and then executing them is the concern of a service locator, not DI. It’s not about one being better than the other, it’s about them being concerned with different things. Service location has an architectural impact on patterns of application composition. DI has an impact on configuring object instantiation.</p>
+<p>The reason the two streams get crossed is that every DI offering that I have come across is built upon and predicated by a service locator. DI is one pattern that can be implemented with a service locator. So in almost every case you’re going to come across the two things in the same place called a “service container”. Use of service location will naturally co-mingle with DI, because reasoned use of DI is a wonderful thing, and shields our application from a lot of instantiation details, keeping them firmly ring-fenced as config.</p>
+<p>To suggest that service location is an anti-pattern and DI is the one pattern (built upon service location) for all the things, is cargo-cultish.</p>
+<p>Inversion and Conclave express service location and assumes you will use whatever DI takes your fancy. What DI you choose to use is not my concern and should not impact the architecture.</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      
+  
+  <div class="tags">
+    <a href="/tags/patterns/">patterns</a>
+  </div>
+
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+  
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2014-11-18T03:15:01.000Z"><a href="/2014/11/18/introducing-inversion/">Nov 18 2014</a></time>
       
       
@@ -255,6 +349,8 @@
     <li><a href="/tags/blog/">blog</a><small>1</small></li>
   
     <li><a href="/tags/inversion/">inversion</a><small>1</small></li>
+  
+    <li><a href="/tags/patterns/">patterns</a><small>1</small></li>
   
     <li><a href="/tags/tools/">tools</a><small>1</small></li>
   
