@@ -97,7 +97,7 @@
 <p>Should we wire in a service locator into a low level PDF library that is not participating in a component model? Probably not, for all the same reasons we probably shouldn’t wire in a message queue.</p>
 <p>Is this to say then that message queues are an anti-pattern? No, it’s to say you’re a muppet if you wire a domestic power cable from the wall outlet into your wrist-watch to power it. Not because domestic power cables and wall outlets are bad or antithetical, but because if you insist on wiring in power cables in <em>inappropriate</em> ways, you’re going to get an electric shock and will probably render your watch inoperable.</p>
 <p>Take 3 Java developers and 3 .NET developers to an imaginary bar in our heads. They’re going to write down as exhaustive list of all the ways in which it is appropriate or inappropriate to use a message queue. Once the Java and .NET devs are done introduce 3 Erlang developers, and there’s going to be a bar fight. This is because an Erlang developer is going to have a completely different architectural take on where it is appropriate to use messaging.</p>
-<p>This might seem a bit of a contrived example unless you are a .NET developer using <a href="https://rx.codeplex.com/" target="_blank" rel="external">Rx.NET</a> or <a href="http://msdn.microsoft.com/en-us/library/hh228603(v=vs.110" target="_blank" rel="external">DataFlow</a>.aspx) in anger. In which case your notions of inter-object communication is probably drifting slowly toward the Erlang chaps and you might surprise your peers by joining the Erlang devs in the ensuing ruck. Further shocking the Java devs when one of their own screams “Scala!” and turns on them… Now throw in 3 Haskel devs and all bets are off. They’re likely to label your whole type-system an anti-pattern… When we look under the table we find a Rails dev rocking themselves whimpering “I just want to build awesome websites”.</p>
+<p>This might seem a bit of a contrived example unless you are a .NET developer using <a href="https://rx.codeplex.com/" target="_blank" rel="external">Rx.NET</a> or <a href="http://msdn.microsoft.com/en-us/library/hh228603.aspx" target="_blank" rel="external">DataFlow</a> in anger. In which case your notions of inter-object communication is probably drifting slowly toward the Erlang chaps and you might surprise your peers by joining the Erlang devs in the ensuing ruck. Further shocking the Java devs when one of their own screams “Scala!” and turns on them… Now throw in 3 Haskel devs and all bets are off. They’re likely to label your whole type-system an anti-pattern… When we look under the table we find a Rails dev rocking themselves whimpering “I just want to build awesome websites”.</p>
 <p>As a .NET dev I may favour compile time errors over runtime errors more than say a Python or Ruby developer, but <em>if I am creating a component model that composes at runtime</em>, and I try and eliminate runtime errors as a blanket architectural rule, then I am likely to bend my architecture out of shape.</p>
 <h2 id="Using_a_process_context_for_service_location">Using a process context for service location</h2>
 <p>So how does <a href="https://github.com/guy-murphy/inversion-dev" target="_blank" rel="external">Inversion</a> and <a href="https://github.com/guy-murphy/conclave-public" target="_blank" rel="external">Conclave</a> approach this? Hopefully with a sense of balance, and an awareness of when the focus is service location and when the focus is dependency injection, with a cut between the two at the appropriate layer for the application to separate its concerns.</p>
@@ -133,7 +133,7 @@
       
   
   <div class="tags">
-    <a href="/tags/patterns/">patterns</a>
+    <a href="/tags/patterns-inversion/">patterns, inversion</a>
   </div>
 
       <div class="clearfix"></div>
@@ -349,7 +349,9 @@
   
     <li><a href="/tags/inversion/">inversion</a><small>1</small></li>
   
-    <li><a href="/tags/patterns/">patterns</a><small>1</small></li>
+    <li><a href="/tags/patterns/">patterns</a><small>0</small></li>
+  
+    <li><a href="/tags/patterns-inversion/">patterns, inversion</a><small>1</small></li>
   
     <li><a href="/tags/tools/">tools</a><small>1</small></li>
   
