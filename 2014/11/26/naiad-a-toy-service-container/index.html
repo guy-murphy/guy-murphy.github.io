@@ -71,7 +71,8 @@
 
 <p>It isn’t much of any use except as a base-line “simplest possible thing that works” to measure more industrial strength implementations against. Just prodding it with <a href="http://httpd.apache.org/docs/2.2/programs/ab.html" target="_blank" rel="external">apache bench</a> for a ballpark it’s a whisker faster than Spring.NET, which considering the facilities Spring offers leaves me quite impressed with Spring.</p>
 <p>There’s a lot of value in returning to the simplest implementation that works as it’s easy to lose track of the cost of components that become an integral part of our applications.</p>
-<p>So there’s no misunderstanding, this is a toy. But sometimes all you need is a toy.</p>
+<p>So there’s no misunderstanding, this is a toy. But sometimes all you need is a toy. Inversion started life as a toy, the initial prototype being a predicate/action dictionary, where the predicate acted on an event and the action acted upon a context. In scripting languages knocking prototypes up with the general purpose data structures lying around such as lists and dictionaries is very normal, and we could maybe do with it becoming more of a norm in .NET before we jump off into the deep-end with grand object-models.</p>
+<p>As I’m proofing this I can see I need to move the exit from the read lock after looking up the constructor but before executing the constructor… as I say, it’s a toy.</p>
 
       
     </div>
