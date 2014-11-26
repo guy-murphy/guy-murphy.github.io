@@ -52,6 +52,53 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2014-11-26T22:25:20.000Z"><a href="/2014/11/26/naiad-a-toy-service-container/">Nov 26 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/11/26/naiad-a-toy-service-container/">Naiad, a toy service container.</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>In the previous piece <a href="http://guy-murphy.github.io/2014/11/24/service-locator-vs-dependency-injection/" target="_blank" rel="external">Service locator vs depdendency injection</a> I had declared, <em>“Service location is, and is provided via an interface on the context that can be implemented inside 10 minutes as a dictionary of lambdas if you had a pressing need.”</em> Which risks being a throw-away comment comprising largely of hot air. So I thought I’d <a href="https://github.com/guy-murphy/inversion-dev/blob/master/Inversion.Naiad/ServiceContainer.cs" target="_blank" rel="external">knock one up</a>, the guts of which is…</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> ConcurrentDictionary&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt; _ctors = <span class="keyword">new</span> ConcurrentDictionary&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt;();</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> RegisterService&lt;T&gt;(<span class="keyword">string</span> name, Func&lt;IServiceContainer, T&gt; ctor) {</div><div class="line">    _lock.EnterWriteLock();</div><div class="line">    <span class="keyword">try</span> {</div><div class="line">        _ctors[name] = ctor;</div><div class="line">    } <span class="keyword">finally</span> {</div><div class="line">        _lock.ExitWriteLock();</div><div class="line">    }</div><div class="line">}</div><div class="line">        </div><div class="line"><span class="keyword">public</span> T GetService&lt;T&gt;(<span class="keyword">string</span> name) {</div><div class="line">    _lock.EnterReadLock();</div><div class="line">    <span class="keyword">try</span> {</div><div class="line">        Func&lt;IServiceContainer, T&gt; ctor = _ctors[name] <span class="keyword">as</span> Func&lt;IServiceContainer, T&gt;;</div><div class="line">        <span class="keyword">return</span> ctor(<span class="keyword">this</span>);</div><div class="line">    } <span class="keyword">finally</span> {</div><div class="line">        _lock.ExitReadLock();</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>It really is just a dictionary of lambdas, and wires up thus…</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">Naiad.ServiceContainer.Instance.RegisterService(<span class="string">"request-behaviours"</span>,</div><div class="line">    container =&gt; {</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> List&lt;IProcessBehaviour&gt; {</div><div class="line">            <span class="keyword">new</span> SimpleSequenceBehaviour(<span class="string">"process-request"</span>, container.GetService&lt;List&lt;<span class="keyword">string</span>&gt;&gt;(<span class="string">"life-cycle"</span>)),</div><div class="line">            <span class="keyword">new</span> BootstrapBehaviour(<span class="string">"bootstrap"</span>,</div><div class="line">                <span class="keyword">new</span> Dictionary&lt;<span class="keyword">string</span>,<span class="keyword">string</span>&gt; {</div><div class="line">                    {<span class="string">"area"</span>, <span class="string">"default"</span>}, </div><div class="line">                    {<span class="string">"concern"</span>, <span class="string">"default"</span>},</div><div class="line">                    {<span class="string">"action"</span>, <span class="string">"default"</span>},</div><div class="line">                    {<span class="string">"app-path"</span>, <span class="string">"/web.harness"</span>}</div><div class="line">                }</div><div class="line">            ),</div><div class="line">            <span class="keyword">new</span> ParseRequestBehaviour(<span class="string">"parse-request"</span>, <span class="string">"Inversion.Web.Harness.Site"</span>),</div><div class="line">            <span class="keyword">new</span> ViewStateBehaviour(<span class="string">"view-state"</span>),</div><div class="line">            <span class="keyword">new</span> ProcessViewsBehaviour(<span class="string">"process-views"</span>),</div><div class="line">            <span class="keyword">new</span> RenderBehaviour(<span class="string">"render"</span>),</div><div class="line">            <span class="keyword">new</span> RazorViewBehaviour(<span class="string">"rzr::view"</span>),</div><div class="line">            <span class="keyword">new</span> XmlViewBehaviour(<span class="string">"xml::view"</span>, <span class="string">"text/xml"</span>),</div><div class="line">            <span class="keyword">new</span> JsonViewBehaviour(<span class="string">"json::view"</span>, <span class="string">"text/json"</span>),</div><div class="line">            <span class="keyword">new</span> XsltViewBehaviour(<span class="string">"xslt::view"</span>, <span class="string">"text/xml"</span>),</div><div class="line">            <span class="keyword">new</span> XsltViewBehaviour(<span class="string">"xsl::view"</span>, <span class="string">"text/html"</span>),</div><div class="line">            <span class="keyword">new</span> HelloWorldBehaviour(<span class="string">"work"</span>){ </div><div class="line">                MatchingAllParameters = <span class="keyword">new</span> Dictionary&lt;<span class="keyword">string</span>,<span class="keyword">string</span>&gt; {</div><div class="line">                    {<span class="string">"action"</span>, <span class="string">"hello"</span>}</div><div class="line">                }</div><div class="line">            }</div><div class="line">        };</div><div class="line">    }</div><div class="line">);</div></pre></td></tr></table></figure>
+
+<p>It isn’t much of any use except as a base-line “simplest possible thing that works” to measure more industrial strength implementations against. Just prodding it with <a href="http://httpd.apache.org/docs/2.2/programs/ab.html" target="_blank" rel="external">apache bench</a> for a ballpark it’s a whisker faster than Spring.NET, which considering the facilities Spring offers leaves me quite impressed with Spring.</p>
+<p>There’s a lot of value in returning to the simplest implementation that works as it’s easy to lose track of the cost of components that become an integral part of our applications.</p>
+<p>So there’s no misunderstanding, this is a toy. But sometimes all you need is a toy.</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      
+  
+  <div class="tags">
+    <a href="/tags/patterns/">patterns</a>, <a href="/tags/inversion/">inversion</a>
+  </div>
+
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2014-11-24T14:11:48.000Z"><a href="/2014/11/24/service-locator-vs-dependency-injection/">Nov 24 2014</a></time>
       
       
@@ -355,9 +402,9 @@
   
     <li><a href="/tags/blog/">blog</a><small>1</small></li>
   
-    <li><a href="/tags/inversion/">inversion</a><small>2</small></li>
+    <li><a href="/tags/inversion/">inversion</a><small>3</small></li>
   
-    <li><a href="/tags/patterns/">patterns</a><small>1</small></li>
+    <li><a href="/tags/patterns/">patterns</a><small>2</small></li>
   
     <li><a href="/tags/tools/">tools</a><small>1</small></li>
   
