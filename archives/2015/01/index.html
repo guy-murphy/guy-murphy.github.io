@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>practice | Weird Scenes Inside The Goldmine</title>
+  <title>Archives: 2015/1 | Weird Scenes Inside The Goldmine</title>
   <meta name="author" content="Guy Murphy">
   
   
@@ -46,7 +46,7 @@
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
     <div id="main-col" class="alignleft"><div id="wrapper">
-<h2 class="archive-title tag">practice</h2>
+<h2 class="archive-title">2015/1</h2>
 
 
   
@@ -183,111 +183,6 @@
   
   <div class="tags">
     <a href="/tags/practice/">practice</a>
-  </div>
-
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-  
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-12-02T14:52:04.000Z"><a href="/2014/12/02/why-I-like-XSLT/">Dec 2 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/12/02/why-I-like-XSLT/">Why I like XSLT.</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>I first fell in love with XSL in 1999, when Microsoft rolled an XSLT processor into MSXML. I got my hands on the works of Shakespeare <a href="http://metalab.unc.edu/bosak/xml/eg/shaks200.zip" target="_blank" rel="external">marked up in XML</a> and started playing. I found it so shockingly easy to transform a whole play into HTML with XSLT handling the heavy lifting of flow control. It was love at first sight.</p>
-<p>I still use XSL today for my own projects, and for a good handful of years there while WebForms were still squeezing the joy out of life, and before the MVC.NET Borg collective had arrived to assimilate everybody, for five glorious years myself and my development team at the time used XSL extensively. Then it all went away.</p>
-<p>Since then Razor has come to dominate, almost to the exclusion of anything else on the .NET platform, with similar templating pervasive across most platforms. I’ve come to terms with the current of the stream being simply too strong to swim against. My closest of colleagues whom I’ve persuaded over the years to entertain a wide variety of bizarre ideas and technologies have remained a stonewall of refusal. So this is why I like XSL.</p>
-<p>This may ramble a little as the reasons why I use XSL are a cohesive whole, making it difficult to tease apart the considerations as individual pieces. Indulge me while I give it a shot.</p>
-<h3 id="Portability">Portability</h3>
-<p>Arguably <em>the</em> big shout for XSLT is the breadth of its support. If you’re writing software commercially, there’s undoubtedly an XSLT processor available on your platform. Just to have a quick eyeball at the outliers, there’s <a href="http://stackoverflow.com/questions/397604/are-there-libraries-to-perform-xslt-transformation-in-erlang" target="_blank" rel="external">XSLT processors for Erlang</a>, and here’s a <a href="http://www.drbob42.com/examines/examin50.htm" target="_blank" rel="external">tutorial on using XSLT with Delphi</a>. The current popular platforms have had very good XSLT for quite some time, and .NET has a very nice optomised XSLT processor.</p>
-<p>It’s not just on the server with <a href="http://greenbytes.de/tech/tc/xslt/" target="_blank" rel="external">XSLT support in browsers</a>. The failure cases there are in areas unlikely to impact development.</p>
-<p>I’m not aware of another templating language that has the range of support that XSLT does. You would need to consider Javascript as a templating language to get support as pervasive.</p>
-<h4 id="What_could_have_been">What could have been</h4>
-<p>If as an industry we had persisted with the adoption of XSL by now our front-end developers would be armed with HTML, CSS, Javascript, <em>and XML/XSLT</em>. They would be used to being handed an XML output on one side, and a design mock on the other for which they wrote the XSL stylesheet to get from one side to the other. Whether their work history had taken them through PHP, Ruby, Python, Java or .NET development teams would make little difference to them. They’d use the same templating solution wherever they went and would need to know little intimately about the platform on which the application was built.</p>
-<p>Recruitment, developer quality, and management of front-end developers would be in a significantly different place than it is today, with front-end developers able to focus on what their job is, accruing common competence regardless of platform along the way.</p>
-<p>“X years commercial experience with HTML, CSS, Javascript, XML/XSL, Creative Suite”, could be enough to plug in a front-end dev into any web development team… Having to then specify “With experience in C#/.NET, MVC.NET, Razor. Entity Framework a bonus” not only partitions you prospective pool of developers or jobs depending on which end of that you find yourself, it also shines a spotlight on the dependencies your view layer is carrying with it.</p>
-<h3 id="Separation_of_concerns">Separation of concerns</h3>
-<p>For me personally this is the big issue, and it’s not an issue that XSLT alone addresses. The piece <a href="http://www.artima.com/lejava/articles/stringtemplate.html" target="_blank" rel="external">The Importance of Model-View Separation</a> is an interview with the author of <a href="http://www.stringtemplate.org/" target="_blank" rel="external">StringTemplate</a> and <a href="http://www.antlr.org/" target="_blank" rel="external">ANTLR</a> which uses StringTemplate on its back-end. It’s a really good discussion with somebody taking a good hard look at just what it means to have a view layer that only deals with it’s own concern.</p>
-<p>With a templating solution like Razor it is easy to both implement business logic, and to reach back into the application in ways a view simply is not meant to. This leads to MVC.NET applications that have views that are highly enmeshed with the broader application.</p>
-<p>In an application using XML/XSL the result of a request operation is an XML view. A serialisation of end-state if you like. The XSL stylesheet can do little except transform this. There is no reaching back up-stream, and implementing business logic in XSL while doable is painful.</p>
-<p>There is a clean fire-break between the handing off of the XML and rendering it as an XSL transform into HTML/CSS/Javascript, PDF or whatever. This line between two layers of the application are as clean as I have witnessed in any architecture, and makes breaking it an exercise in swimming against the tide.</p>
-<h4 id="The_VmEntityName_plague">The <code>VmEntityName</code> plague</h4>
-<p>A lot of MVC.NET applications use Entity Framework or a similar ORM, often with lazy-loading of members. By the time these “live” entities make it down to view layer their context has been disposed, and so their data-members can’t be populated. Even when lazy loading isn’t being used, we don’t feel good about passing these entities down to our view.</p>
-<p>So we start creating a whole bunch of view-model objects for different scenarios, and the surface area of our application model balloons. Hydrating these view-model objects is a pain in the arse, so we employ and auto-mapper. We now have a wonderful little tar-ball of complexity that’s simply going to increase over time, stretching testing to the point where you’ve simply stopped doing it in any real sense.</p>
-<h4 id="An_XML_view-model">An XML view-model</h4>
-<p>XML is really good at extensible representation of data-models. It was purpose made for it off the back of a lot of experience from SGML. I like that I can start with a simple unconstrained view-model that can be refined and tightened over time. I can layer different models with namespaces, and I can apply schema to the model if needed.</p>
-<p>For large complex applications where the view pipeline is a significant portion of the application, in multi-tenant or white-labeling scenarios I can outright come up with a domain-specific language for the view-layer.</p>
-<h3 id="Transformations">Transformations</h3>
-<p>XSLT is intended to transform one XML document into another XML document. Any text notation can be output from XML, but it’s designed for XML-to-XML. This transformation is accomplished by matching on a point of context in a document, and then specifying output and recursion on the basis of this match. XSL is a functional language that makes it difficult to use in an imperative fashion. There is <code>for-each</code> and <code>call-template</code> but their use is strongly discouraged.</p>
-<p>Transformations naturally lead to pipelines. The output of one stylesheet can be the input of another. So for example, the data-model is serialised to XML, the back-end devs then transform this to an intermediate presentational layer. Fornt-end devs are then responsible for rendering this presentational layer into HTML. If you need to actually layer your view layer XML/XSL will naturally extend in this direction. Razor wont.</p>
-<h3 id="Focus_on_API">Focus on API</h3>
-<p>The focus on XML as the result of a controller naturally focuses development on the application API, as you’re effectively creating an API for your own internal use. This XML API is what your XSL stylesheets use. Making this accessible externally becomes a naturally progression rather than a different activity.</p>
-<p>Serialisation by <a href="https://github.com/guy-murphy/inversion-dev/blob/master/Inversion/DataEx.cs" target="_blank" rel="external">threading a writer through an object graph</a> is fast and provides a single pattern for serialising to XML, JSON, or whatever.</p>
-<h3 id="Sand-boxed">Sand-boxed</h3>
-<p>The clean fire-break between the view template and the rest of the application coupled on an XML representation that the XSL dev can’t reach back beyond means your view-temaplte is neatly sandboxed. A lot of effort has been made to ensure you can’t yield side-effects from the XSLT template except to produce output. There are far fewer sins can be committed in an XSL template than a Razor template. Doing the wrong thing is painful.</p>
-<h4 id="Null_references_in_the_view">Null references in the view</h4>
-<p>If your view templating solution has issues with null references, it’s not a view templating solution. Defensive coding in a view template is decidedly more torturous than XSLT.</p>
-<h3 id="Ease_of_testing">Ease of testing</h3>
-<p>The combination of portability, wide availability, clean separation of concerns, and not least <strong>schema</strong>, means that testing not only XSL stylesheets themselves but the XML product of controllers is about as easy as it gets. Mocking XML data-model representations is trivial. </p>
-<p>Handing your front-end dev an XML mock and saying “this is what we’ll be producing” allows them to be working on the view presentation at the same time that you are working on the implementation.</p>
-<h2 id="And_the_down-side">And the down-side</h2>
-<p>There are many books and articles extolling the virtues of XSLT, but we can’t get passed a quite deeply ingrained loathing of XSLT and indeed XML in general in whole segments of the web development community. I have personally always found this a little odd in a bunch of people that have such a focus on HTML markup, but it is there and cannot be ignored.</p>
-<blockquote>
-<p><a href="http://www.artima.com/lejava/articles/stringtemplate.html" target="_blank" rel="external">Bill Venners</a> When you hire a bunch of programmers it can be quite difficult to get them all to go in the same direction. One of the ways I think about architecture is that you can try to define it such that it is easy for people to go the way you want them to go, and painful, though likely possible, to go other ways. People will usually follow the easy route.</p>
-</blockquote>
-<p>XSLT deliberately makes some thing difficult. This can be misidentified as a problem with XSLT rather than a problem with what it is you’re trying to do in a view-template. That being said, some issues are not about trying to do the wrong thing but are about some sharp edges XSLT presents in a current web development environment.</p>
-<h3 id="It’s_XML">It’s XML</h3>
-<p>I can’t help but feel that if this…</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">xsl:template</span> <span class="attribute">match</span>=<span class="value">"item[@name='navigation-view']"</span> <span class="attribute">mode</span>=<span class="value">"navigation"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">h4</span>&gt;</span>Relations<span class="tag">&lt;/<span class="title">h4</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">ul</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">xsl:apply-templates</span> <span class="attribute">select</span>=<span class="value">"records/item"</span> <span class="attribute">mode</span>=<span class="value">"navigation"</span> /&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">ul</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">xsl:template</span>&gt;</span></div></pre></td></tr></table></figure>
-
-<p>Had looked like this…</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$template[navigation](item[@name='navigation']){</div><div class="line">    <span class="tag">&lt;<span class="title">h4</span>&gt;</span>Relations<span class="tag">&lt;/<span class="title">h4</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">ul</span>&gt;</span></div><div class="line">        $apply-templates[navigation](records/item)</div><div class="line">    <span class="tag">&lt;/<span class="title">ul</span>&gt;</span></div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>The history of XSL may well have been different. <a href="http://en.wikipedia.org/wiki/Document_Style_Semantics_and_Specification_Language" target="_blank" rel="external">DSSSL</a> a stylesheet language for SGML that XSL is derived from is a subset of Scheme. We can see here the origins of CSS also.</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="list">(<span class="title">element</span> doc</span></div><div class="line">    <span class="list">(<span class="title">make</span> paragraph</span></div><div class="line">        font-size:    <span class="number">20</span>pt</div><div class="line">        line-spacing: <span class="number">20</span>pt</div><div class="line">        font-weight:  <span class="quoted">'bold</span></div><div class="line">        color:        color-purple</div><div class="line">        <span class="list">(<span class="title">process-children</span>)</span>))</div></pre></td></tr></table></figure>
-
-<p>If XSL had a different notation, we’d be all over it.</p>
-<p>XSLT is verbose, and without good editor support it’s a right pain in the arse. I work largely on the .NET platform spending much of my life in Visual Studio. I have intellisense for XSLT, a good understanding of XML by the IDE, and even debugging of XSL stylesheets. Anybody working in a similar situation has little excuse to cite “pain in the arse to work with” as the IDE is handling the pain for you.</p>
-<p>If you want however, you can be working on your templates with Notepad and a web-browser.</p>
-<p>The fact remains XSL syntax is less friendly for the developer than most templating languages. Architecturally however, it’s hard to conceive of a friendlier templating solution. The “X” stands for extensible.</p>
-<h3 id="It’s_harder_to_think_about_for_imperative_programmers">It’s harder to think about for imperative programmers</h3>
-<p>XSL is a strict functional language. It relies on pattern matching and recursion. These are things that can legitimately hurt our heads a bit coming from traditional imperative, OO backgrounds. I would suggest this pain passes with familiarity until it is gone. The gains from XSL continue to accrue over time.</p>
-<h3 id="Staffing_can_be_tricky_with_XSL">Staffing can be tricky with XSL</h3>
-<p>Because of the unpopularity of XSL acquiring devs with experience can be tricky. Even those devs who have used XSL often don’t maintain or develop skills with it and was often a cleaning out the latrines type task when they came into contact with it.</p>
-<p>Projects that are constrained with developer experience, where there is significant developer churn, or where the project is short lived… truthfully it’s not worth the hastle, life’s too short.</p>
-<p>For long-lived projects, or where there is investment in staff and work-flow developing skills with XSL and architecting an adult view layer I would say warrants proper consideration. Razor looks like a quick-fix but as it muddies the boundaries around the view layer, it also muddies the skill requirements of your front-end devs and can make for a very uncomfortable working relationship between front-end and back-end devs. This often leads to developers spending quite a bit of time working on a side of the fence they aren’t particularly comfortable on. Either your front-end devs are working with C# and a view-model exposed as an object model, or your back-end devs are producing HTML and CSS.</p>
-<p>The fact remains that today, staffing and training can be an issue with XSL.</p>
-<h2 id="An_acquired_taste">An acquired taste</h2>
-<p>A diet of nothing but fast-food is bad for us. Picking nothing but fast-food technologies for our application stacks is bad for them. Razor is compelling because like fast-food it requires little if any effort on our parts. There are times when its expedience should win out as the right choice, there are many times however when it is rotting the insides of our applications, clogging its arteries and shortening their lifespan.</p>
-<p>Many of the foods that are good for us we spat out as children because they had a strong taste. Often as adults these same foods go on to become our favourites, sometimes even becoming described as “moorish”. Sometimes the same is true of technology, and even when it’s not good food is still required for health regardless of our tastes.</p>
-<p>If it were just a personal matter, no more than that need be said about it. Many of us however are paid well to make good technical choices for companies we work for. We should be careful that we are not making choices on their behalf based solely on our own personal tastes.</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      
-  
-  <div class="tags">
-    <a href="/tags/patterns/">patterns</a>, <a href="/tags/practice/">practice</a>
   </div>
 
       <div class="clearfix"></div>
