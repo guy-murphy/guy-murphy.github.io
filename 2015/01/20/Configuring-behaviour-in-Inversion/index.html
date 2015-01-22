@@ -3,13 +3,16 @@
 <head>
   <meta charset="utf-8">
   
-  <title>inversion | Weird Scenes Inside The Goldmine</title>
+  <title>Configuring behaviour in Inversion | Weird Scenes Inside The Goldmine</title>
   <meta name="author" content="Guy Murphy">
+  
+  <meta name="description" content="Or, Experiments with black-box development.
+I’ve recently overhauled both the way that Inversion configures behaviours and the way in which that confi">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="Configuring behaviour in Inversion"/>
   <meta property="og:site_name" content="Weird Scenes Inside The Goldmine"/>
 
   
@@ -45,12 +48,7 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-<h2 class="archive-title tag">inversion</h2>
-
-
-  
-    <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
   <div class="post-content">
     <header>
@@ -60,7 +58,7 @@
       
       
   
-    <h1 class="title"><a href="/2015/01/20/Configuring-behaviour-in-Inversion/">Configuring behaviour in Inversion</a></h1>
+    <h1 class="title">Configuring behaviour in Inversion</h1>
   
 
     </header>
@@ -314,363 +312,16 @@
 </article>
 
 
+<section id="comment">
+  <h1 class="title">Comments</h1>
 
   
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-11-27T03:43:18.000Z"><a href="/2014/11/27/I-come-not-to-bury-IoC-but-to-praise-it/">Nov 27 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/11/27/I-come-not-to-bury-IoC-but-to-praise-it/">I come not to bury IoC but to praise it.</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Or, <em>All elephants are grey, that’s grey, therefore that’s an elephant.</em></p>
-<p>I have used Spring.NET since 2006 when I first used it as the backbone of an MVC framework and CMS on the .NET platform, and I have used it aggressively since and to this day, inducting several development teams into its use over that time.</p>
-<p>I felt compelled to give my credentials there as a good card carrying developer, hip to current trends, who finds it almost unthinkable to write a non-trivial application without an IoC container. I feel compelled because this piece may be unfashionable and I’m kind of dimly aware could make me unpopular in the current development community in which I find myself. Nobody likes to voice an unpopular view. We fear others will think us stupid.</p>
-<p>It’s important that any reader appreciate that I am writing as .NET developer, lead and architect working in London. There may well be wider applicability to my views, but I can’t know that, as my observations are based on… well, what I get to observe. Things may be similar where you are, but they may not.</p>
-<h2 id="A_room_full_of_smart_people_wearing_bell-bottoms,_because…">A room full of smart people wearing bell-bottoms, because…</h2>
-<p>I have found myself on more than one occasions saying to my developers, <em>“commercial software development is first and foremost a social activity before it is anything else”</em>. I’d been saying that (possibly while stroking my beard) for some time before I actually stopped to think about it, because I felt quite a level of conviction, before I really understood what I meant. </p>
-<p>It’s not a terribly opaque statement, and it’s really quite obvious the moment you consider it… Before any code gets written, before any infrastructure is laid down, a bunch of people are going to make a whole bunch of decisions.  Throughout the development of an application, and through it’s support and maintenance a wide assortment of people are going to negotiate between themselves what is right action and what is wrong action. The quality of those decisions will have a significant impact on the quality of the software and ultimately equate to pound signs either written in black or red.</p>
-<p>There are libraries filled with books written on the subject of people and decision making by writers far more studied in the subject than myself. I want to focus for the moment on one specific aspect of groups of developers and architects making technical decisions together. The acceptance without scrutiny of self evident virtue received as common wisdom from a peer group. Known by the more plain speaking as <strong>Fashion</strong>.</p>
-<p>There’s a couple of angles I could take at this and I may explore other areas later, but for now I want to drill into Inversion of Control and Dependency Injection a little, and the manner of it’s pervasive use in the .NET development community currently.</p>
-<p>I’ll admit that’s a lot of packaging before getting to the content.</p>
-<h2 id="Inversion_of_Control_(IoC)">Inversion of Control (IoC)</h2>
-<p>So what is IoC? It’s almost impossible to answer that question without first asking <em>“when?”</em>, because the expected answer to that question in interview today is very different than those who coined the term would give.</p>
-<blockquote>
-<p><a href="http://martinfowler.com/articles/injection.html" target="_blank" rel="external">Martin Fowler</a> When these containers talk about how they are so useful because they implement “Inversion of Control” I end up very puzzled. Inversion of control is a common characteristic of frameworks, so saying that these lightweight containers are special because they use inversion of control is like saying my car is special because it has wheels.</p>
-</blockquote>
-<p>I am reminded of the fact that if more people read Fielding’s <a href="http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven" target="_blank" rel="external">own comments on the application of REST</a>, there would be a lot fewer articles and books on REST, and far fewer applications calling themselves RESTful. Concepts percolate through the development community and in the same way the truth of an event in some distant foreign country will go through many changes before it reaches your tabloid front-page, so do concepts in software development before they end up in the blog post you’re reading.</p>
-<p>If we’re not lazy however, we can go back to their root and origin.</p>
-<blockquote>
-<p><a href="http://www.laputan.org/drc/drc.html" target="_blank" rel="external">Ralph Johnson and Brian Foote</a> One important characteristic of a framework is that the methods defined by the user to tailor the framework will often be called from within the framework itself, rather than from the user’s application code. The framework often plays the role of the main program in coordinating and sequencing application activity. This <strong>inversion of control</strong> gives frameworks the power to serve as extensible skeletons. The methods supplied by the user tailor the generic algorithms defined in the framework for a particular application.</p>
-</blockquote>
-<p>That quote, which is referenced by Mr. Fowler’s writing on IoC and was written in 1988. If I can persuade you to read just one paper, please make it this one. </p>
-<h3 id="What_is_IoC_trying_to_achieve?">What is IoC trying to achieve?</h3>
-<p>Before we look at the ways in which IoC is in someway a special case, it is useful perhaps to consider what it shares in common with a broader approach.</p>
-<p>IoC participates in a movement to develop techniques for more reusable code, along with a bunch of other principles to this end. One of the success criteria then for our employment of IoC then is the degree to which we attain code reuse.</p>
-<p>The environment in which IoC grew-up code reuse was seen not just as a means of increasing productivity, it was seen as essential if systems were to be allowed to grow and evolve over time, without collapsing under their own weight of complexity. There’s a lot of talk of class libraries evolving into frameworks, and frameworks evolving from <a href="http://en.wikipedia.org/wiki/White_box_(software_engineering%29" target="_blank" rel="external">white box</a> systems to <a href="http://en.wikipedia.org/wiki/Black_box" target="_blank" rel="external">black box</a> as our understanding of a systems abstraction improve with experience. There’s importance given in the early talk of and around IoC to the human factor at play within development. Systems should it was thought change as our understanding as a group of people engaged with a problem domain changes. The system should evolve in tandem with our understanding of it.</p>
-<p>This approach to software development as an evolving system requires a focus on decoupling of implementation from use, an aggressive focus on discrete interfaces, and an almost obsessive regard for component substitution (plug-ability).</p>
-<p>This common goal is what IoC is meant to further, to yield systems resilient to change.</p>
-<h3 id="So_what_is_IoC?">So what is IoC?</h3>
-<p>It’s a lot of different things.</p>
-<blockquote>
-<p><a href="http://martinfowler.com/bliki/InversionOfControl.html" target="_blank" rel="external">Martin Fowler</a> There is some confusion these days over the meaning of inversion of control due to the rise of IoC containers; some people confuse the general principle here with the specific styles of inversion of control (such as dependency injection) that these containers use. The name is somewhat confusing (and ironic) since IoC containers are generally regarded as a competitor to EJB, yet EJB uses inversion of control just as much (if not more).</p>
-</blockquote>
-<p>Whoah. Something more IoC than an IoC Container?</p>
-<p>One of the characteristics of the practice of religious faith, is that it often doesn’t stand up to scrutiny with its founding texts and prophets.</p>
-<blockquote>
-<p><a href="http://martinfowler.com/bliki/InversionOfControl.html" target="_blank" rel="external">Martin Fowler</a> Another way to do this is to have the framework define events and have the client code subscribe to these events. .NET is a good example of a platform that has language features to allow people to declare events on widgets. You can then bind a method to the event by using a delegate.</p>
-</blockquote>
-<p>You’ve been doing IoC for a long time, in a lot of different ways, long before you ever found <a href="http://www.ninject.org/" target="_blank" rel="external">Ninject</a>.</p>
-<p>Inversion of Control is any pattern that inverts the traditional procedural flow of control. That’s it. The purpose of which is to reduce coupling between components to make them easier to swap out, and to promote flexible application evolution that is able to cope with new abstraction built from it.</p>
-<h2 id="Just_because_your_mouse_is_grey_doesn’t_mean_it’s_an_elephant">Just because your mouse is grey doesn’t mean it’s an elephant</h2>
-<p>Consider the following wee piece of code…</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">context.FireWith(<span class="string">"user-store::delete-user"</span>, <span class="string">"user-id"</span>);</div></pre></td></tr></table></figure>
-
-<p>Which is a straight-up imperative call. We have the expectation that a named component will delete the user specified. It’s a message-based call, and there are valid aspects of decoupling taking place here, but it’s weak in terms of IoC as it’s a traditional forward calling imperative… <em>“Oi! You there, do that.”</em></p>
-<p>Almost the same…</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">context.FireWith(<span class="string">"user-unsubscribed"</span>, <span class="string">"user-id"</span>);</div></pre></td></tr></table></figure>
-
-<p>Here we are notifying the system of a significant occurrence. We may have no idea what if anything is going to happen as a side-effect of this. Several things may act upon this, or nothing may act upon this… and we don’t care, because in the second example it’s not our business at this point in the application. This is not an imperative. It’s notifying the broader system of an event… <em>“Excuse me. Anybody there? I don’t want to be a nuisance, but I just did something, and I thought somebody might want to know.”</em>… Henceforth to be known as <em>the English pattern</em>.</p>
-<p>In the second example you can have many components responding to the message, each with a discrete narrow focus of purpose. It is open to easy extension by adding new components that will respond to the message, without modifying existing implementation or behaviour. It’s easy to swap out components for ones with different implementations, and the interface is small, discrete and generalised, binding is indirect and at runtime. Feature switching not just at compile time, but at runtime is possible. Lastly at this point in the code, we don’t concern ourself with what happens in the broader system, and require the least possible knowledge about the broader system.</p>
-<p>We’re using exactly the same API call here, but this time our expectations are of a reactive response to this event. Here we have inverted the traditional flow of control. Both these calls will use exactly the same mechanic of resolution, but one expresses an inversion of control and one doesn’t.</p>
-<p>That’s how narrow the divide can be between flow of control going forward or backwards. The defining factor on either side of that divide is one of intent. By intent I mean an implicit accord on both sides with a common expectation of the meaning of a signal. The balance of the roles and responsibilities in this relationship are for you to decide. It’s about your intent. The mechanism of that signal is important, but not as important as what is being expressed and what is expected. There’s lots of different ways you can use a delegate, many of them will invert control, but simply using a delegate will not get you inversion of control.</p>
-<p>It ain’t what you do, it’s the way that you do it, and parroting patterns will not ensure that intent is fulfilled. Understanding intent is key here, as if we understand intent, as long as we’re half-decent developers, our implementations will improve over time and we’ll get there. If we don’t understand the initial intent, our chances of hitting the target are much reduced and start involving luck.</p>
-<p>The pioneers laying down these principles did not expect it to be possible for groups of humans to land on the perfect abstraction straight out the gate. They talk about taking flawed initial implementations and iteratively improving our architectural choices. So unless you happen to be some kind of architectural genius that gets their abstractions right first time, a strategy for change becomes a strategy for survival.</p>
-<h3 id="Javascript">Javascript</h3>
-<p>I’m aware of where Javascript started with Netscape on the server, and I’m aware of where Javascript is today both with <a href="http://nodejs.org/" target="_blank" rel="external">NodeJS</a>. Javascript came of age however in the browser. This meant that Javascript grew up in an environment where the programmer was interacting with a framework (the browser) via an exposed object model.</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">onclick</span>=<span class="value">"function(this){/* do something with 'this' */}"</span>&gt;</span></div></pre></td></tr></table></figure>
-
-<p>That’s a good example of inversion of control. We’re registering a callback with an event the framework is going to raise for this element, with the execution of any callbacks managed by the framework. If we think of the alternative, we would need to modify the framework’s core functionality.</p>
-<p>This naturally evolves to…</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">element.addEventListener(<span class="string">"click"</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{ alert(<span class="string">"Hello World!"</span>); });</div></pre></td></tr></table></figure>
-
-<p>Javascript developers weren’t writing complete applications, they were integrating with a framework that forced them to accept IoC as the natural order of things. Modern Javascript frameworks reflect this heritage.</p>
-<p>There’s any one of a rampaging horde of Javascript frameworks I could cite for example here, so don’t read too much in my choosing Twitter’s <a href="https://flightjs.github.io/" target="_blank" rel="external">Flight</a> to illustrate the point.</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Component definition */</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> Inbox = flight.component(inbox);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">inbox</span><span class="params">()</span> </span>{</div><div class="line">  <span class="keyword">this</span>.doSomething = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{ <span class="comment">/* ... */</span> }</div><div class="line">  <span class="keyword">this</span>.doSomethingElse = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{ <span class="comment">/* ... */</span> }</div><div class="line"></div><div class="line">  <span class="comment">// after initializing the component</span></div><div class="line">  <span class="keyword">this</span>.after(<span class="string">'initialize'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">    <span class="keyword">this</span>.on(<span class="string">'click'</span>, <span class="keyword">this</span>.doSomething);</div><div class="line">    <span class="keyword">this</span>.on(<span class="string">'mouseover'</span>, <span class="keyword">this</span>.doSomethingElse);</div><div class="line">  });</div><div class="line">}</div><div class="line"></div><div class="line"><span class="comment">/* Attach the component to a DOM node */</span></div><div class="line"></div><div class="line">Inbox.attachTo(<span class="string">'#inbox'</span>);</div></pre></td></tr></table></figure>
-
-<p>It’s not so much that Javascript has such laudable executions of IoC, it’s that the .NET development community has settled on such an anemic consensus on IoC.</p>
-<h2 id="And_we’ve_not_mentioned_Dependency_Injection_(DI)_yet">And we’ve not mentioned Dependency Injection (DI) yet</h2>
-<p>Because although it’s pervasive, it’s possibly the least interesting aspects of IoC while remaining one of the more convenient.</p>
-<blockquote>
-<p>In dependency injection, a dependent object or module is coupled to the object it needs at run time. <a href="http://en.wikipedia.org/wiki/Inversion_of_control" target="_blank" rel="external">http://en.wikipedia.org/wiki/Inversion_of_control</a></p>
-</blockquote>
-<p>Coupled to the object it needs. There is coupling taking place with DI that needs to be managed, and if it’s via constructor injection it’s not necessarily very loose.</p>
-<p>I’m looking at an MVC.NET controller with 15 objects injected into it’s constructor. Most of them are repositories. I was intending to count the members of each of those objects, but the first one had 32 public members and I stopped counting there.</p>
-<p>How loosely coupled do you think I feel looking at this code? How discrete are the responsibilities being exercised here do you think?</p>
-<p>These objects are all injected into the controller by an IoC container. There is a huge surface area being exposed to this component regardless of which particular operation it is performing, with is possessing 27 public members itself.</p>
-<p>Just because you are using an IoC container and DI does not mean you are implementing IoC. It just means you’ve found a convenient way to manage instantiation of objects. In my experience this convenience in wiring up components in unthoughtful ways has done considerable harm exhibited by the current swathe of MVC.NET + Entity Framework + Ninject web application all implemented quite cheerfully around SOLID principles.</p>
-<blockquote>
-<p><a href="http://www.laputan.org/drc/drc.html" target="_blank" rel="external">Ralph Johnson and Brian Foote</a> Sometimes it is hard to split a class into two parts because methods that should go in different classes access the same instance variable. This can happen because the instance variable is being treated as a global variable when it should be passed as a parameter between methods. Changing the methods to explicitly pass the parameter will make it easier to split the class later.</p>
-</blockquote>
-<p>Your use of the constructor is not inconsequential. I personally aim as much as possible to inject at the constructor only such configuration data as is necessary for that class of component to operate, regardless of implementation. I want as much as possible to be able to swap out implementations without altering their config. Remember that’s what we’re trying to achieve here.</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">object</span> <span class="attribute">type</span>=<span class="value">"Conclave.Web.Behaviour.BootstrapBehaviour"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">constructor-arg</span> <span class="attribute">name</span>=<span class="value">"message"</span> <span class="attribute">value</span>=<span class="value">"bootstrap"</span> /&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">constructor-arg</span> <span class="attribute">name</span>=<span class="value">"params"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">dictionary</span> <span class="attribute">key-type</span>=<span class="value">"string"</span> <span class="attribute">value-type</span>=<span class="value">"string"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">entry</span> <span class="attribute">key</span>=<span class="value">"area"</span> <span class="attribute">value</span>=<span class="value">"default"</span> /&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">entry</span> <span class="attribute">key</span>=<span class="value">"concern"</span> <span class="attribute">value</span>=<span class="value">"default"</span> /&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">entry</span> <span class="attribute">key</span>=<span class="value">"action"</span> <span class="attribute">value</span>=<span class="value">"default"</span> /&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">entry</span> <span class="attribute">key</span>=<span class="value">"app-path"</span> <span class="attribute">value</span>=<span class="value">"/conclave.cms"</span> /&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">dictionary</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">constructor-arg</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">object</span>&gt;</span></div></pre></td></tr></table></figure>
-
-<p>We’re configuring behaviour here, regardless of the implementation what we are expressing in this configuration remains the same as our intent is the same. Although we are not obliged contractually we understand the spirit of our intent and try and keep our constructors as honest a part of our interface as possible.</p>
-<p>This is DI, but it’s very much light-weight and focuses on configuring the component for use.</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">object</span> <span class="attribute">type</span>=<span class="value">"Conclave.Web.Behaviour.View.XslViewBehaviour, Conclave.Web"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">constructor-arg</span> <span class="attribute">name</span>=<span class="value">"message"</span> <span class="attribute">value</span>=<span class="value">"xslt::view"</span> /&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">constructor-arg</span> <span class="attribute">name</span>=<span class="value">"contentType"</span> <span class="attribute">value</span>=<span class="value">"text/xml"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">object</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">object</span> <span class="attribute">type</span>=<span class="value">"Conclave.Web.Behaviour.View.XslViewBehaviour, Conclave.Web"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">constructor-arg</span> <span class="attribute">name</span>=<span class="value">"message"</span> <span class="attribute">value</span>=<span class="value">"xsl::view"</span> /&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">constructor-arg</span> <span class="attribute">name</span>=<span class="value">"contentType"</span> <span class="attribute">value</span>=<span class="value">"text/html"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">object</span>&gt;</span></div></pre></td></tr></table></figure>
-
-<p>If a component uses rather than has another service for it’s operation it is an implementation detail and is acquired by service location. In this particular framework we care a lot about being able to swap out components, and ensure this intent is met.</p>
-<p>In most cases I do not regard it as appropriate to inject something as fat and implementation specific as a repository into a behavioural component. Even though it may be DI, there are too many other principles in the balance that this violates.</p>
-<h2 id="The_Dependency_Inversion_Principle_(DIP)">The Dependency Inversion Principle (DIP)</h2>
-<p>The “D” in <a href="http://en.wikipedia.org/wiki/SOLID_(object-oriented_design%29" target="_blank" rel="external">SOLID</a> does not stand for Dependency Injection. It stands for the <a href="http://en.wikipedia.org/wiki/Dependency_inversion_principle" target="_blank" rel="external">Dependency inversion principle</a> which is a subtly different thing. And has a focus on implementing interface abstractions and using those interface abstractions.</p>
-<blockquote>
-<p>The goal of the dependency inversion principle is to decouple application glue code from application logic. Reusing low-level components (application logic) becomes easier and maintainability is increased. This is facilitated by the separation of high-level components and low-level components into separate packages/libraries, where interfaces defining the behavior/services required by the high-level component are owned by, and exist within the high-level component’s package. <strong>The implementation of the high-level component’s interface by the low level component requires that the low-level component package depend upon the high-level component for compilation, thus inverting the conventional dependency relationship</strong>. Various patterns such as Plugin, Service Locator, or Dependency Injection are then employed to facilitate the run-time provisioning of the chosen low-level component implementation to the high-level component. <a href="http://en.wikipedia.org/wiki/Dependency_inversion_principle" target="_blank" rel="external">http://en.wikipedia.org/wiki/Dependency_inversion_principle</a></p>
-</blockquote>
-<p>In Dependency Inversion, the implementing class is dependent on an interface that is either owned by an intermediary that the high level component is also dependent upon, or the interface is owned by the high level component. </p>
-<p>Strictly speaking if the interface isn’t owned by the high level component, the dependency has not been inverted.</p>
-<blockquote>
-<p>In order to completely achieve dependency inversion, it is important to understand that the abstracted component, or the interface in this case, must be “owned” by the higher-level class. <a href="http://blog.appliedis.com/2013/12/10/lost-in-translation-dependency-inversion-principle-inversion-of-control-dependency-injection-service-locator/" target="_blank" rel="external">http://blog.appliedis.com/2013/12/10/lost-in-translation-dependency-inversion-principle-inversion-of-control-dependency-injection-service-locator/</a></p>
-</blockquote>
-<p>In Inversion and Conclave you’ll see occasionally a comment along the lines of <code>// we need to own this interface</code>. You’ll also see several BCL components being wrapped such as request and response objects. One of the goals of Inversion is to be easily portable to other platforms, and so it is important to control what interfaces the framework exposes.</p>
-<p>We don’t notice this for the most part in everyday development as a lot of our interface abstractions are picked up by the .NET base class library. If I have a low level component implementing <code>IList</code> and a high level component consuming is via <code>IList</code>, we take the stewardship of the interface by the BCL as good-enough, and quite reasonably don’t get too pedantic over the fact this isn’t DIP as the high level component doesn’t own the interface. A stable and neutral third-party is often anointed by the high level component. That example is a little contrived for simplicity as lists are not the kind of components we would normally engage this level of concern over, but more valid examples are to be found in the <code>System.Data</code> namespace.</p>
-<p>This principle can quickly get quite fiddly in practice so often its pragmatically summarised as <em>“don’t use concretes”</em>, which gives 80% of its goodness, but not all.</p>
-<p>Consider the use of the <code>Newtonsoft.Json</code> package. It’s such a brilliant package that it’s used extensively. When a high level component couples with these interfaces it becomes dependent on them in the traditional way. You don’t control those interfaces, Newtonsoft do. In most cases use of such foreign interfaces should be implementation detail that is not exposed to the broader framework.</p>
-<p>But there’s a way to dodge most of the issues with DIP entirely, and that is to not use lower level components directly. Instead model the interactions the high level component needs to have with the low level components, treat them as pluggable black-boxes, and only interact with them via an intermediary interface with the framework responsible for resolving that interaction. Messaging is a good example of this, as were the two snippets of code earlier in this piece.</p>
-<h2 id="Fashion">Fashion</h2>
-<p>When a room full of smart people decide to turn MVC.NET + Entity Framework + Ninject into a the exact opposite of what IoC is trying to achieve, which is to say a rats nest of dependencies, leaking knowledge all over the place, with components coupling like a Roman orgy, we have to ask ourselves how and why?</p>
-<p>The best answer I can come up with is fashion.</p>
-<p>That’s not to be dismissive or derisory. To be so would only compound the issue. It is to acknowledge that we can see and accept the role of fashion in almost every human endevour, and to suggest that we may need to consider how it impacts our technical choices.</p>
-<p>We all have a very real need to feel the support and approval of our peers. It’s not a mild passing influence, it’s wired deep into us as a survival strategy as an animal. As we occupy the more geekish end of the spectrum we tend to seek our approval through demonstrating what we know. Moreover it’s the means by which we earn our living. Saying <em>“I don’t know”</em>, does not necessarily come easy to us.</p>
-<p>DIP causes me problems. I disagree in part with some of it’s intent. I don’t want my low level components knowing anything about my higher level components. I have no intention of doing that. That bit of DIP looks like nonsense to me.</p>
-<p>When I make that assertion I know a couple of things. The Dependency inversion principle was cooked up by some very smart and well studied people. Given that, there is the distinct possibility that I am missing something. The confusion I feel when considering some aspects of DIP further lends weight to this. If I’m sat in a room of my peers, I risk looking foolish if I express my confusion.</p>
-<p>Now imagine I’m a team lead or architect. I’m getting paid to know what I’m doing, and my ability to lead and instruct my team is dependent on their respect for my technical ability. I am making myself vulnerable when I admit to my team that I am experiencing confusion with some methods of application of an architectural principle that the whole .NET community seem to have accepted as self evidently virtuous. It might be easier to just pretend I know, and then to cover my inadequacy coach my team in my version and understanding of DIP as the real thing.</p>
-<p>This is how fashionable decisions are made. When the goal becomes to be seen by our peers as “good developers” we are engaged in a social exercise and the technical merits of our choices become secondary.</p>
-<p>In every case where I have observed this happening it is either an absence of a team lead, or a failure on the part of the team lead to establish the safety for simple human honesty. Further a failure to acknowledge that despite best intentions we are very fallible, and intellectual honesty needs to be motivated. The technical impact of this is we end up wearing principles like IoC like a fashion accessory with very little honest endevour given to it’s underlying intent.</p>
-<p>IoC is great. On the .NET platform it’s a particularly interesting time with so much growth in reactive features on the platform, and the TPL. IoC as it exists currently in commercial web application development on the .NET platform has more to do I would suggest with fashion than anything of substance.</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      
-  
-  <div class="tags">
-    <a href="/tags/patterns/">patterns</a>, <a href="/tags/inversion/">inversion</a>
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
-
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
   
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-11-26T22:25:20.000Z"><a href="/2014/11/26/naiad-a-toy-service-container/">Nov 26 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/11/26/naiad-a-toy-service-container/">Naiad, a toy service container.</a></h1>
-  
+</section>
 
-    </header>
-    <div class="entry">
-      
-        <p>In the previous piece <a href="http://guy-murphy.github.io/2014/11/24/service-locator-vs-dependency-injection/" target="_blank" rel="external">Service locator vs depdendency injection</a> I had declared, <em>“Service location is, and is provided via an interface on the context that can be implemented inside 10 minutes as a dictionary of lambdas if you had a pressing need.”</em> Which risks being a throw-away comment comprising largely of hot air. So I thought I’d <a href="https://github.com/guy-murphy/inversion-dev/blob/master/Inversion.Naiad/ServiceContainer.cs" target="_blank" rel="external">knock one up</a>, the guts of which is…</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> ConcurrentDictionary&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt; _ctors = <span class="keyword">new</span> ConcurrentDictionary&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt;();</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> RegisterService&lt;T&gt;(<span class="keyword">string</span> name, Func&lt;IServiceContainer, T&gt; ctor) {</div><div class="line">    _lock.EnterWriteLock();</div><div class="line">    <span class="keyword">try</span> {</div><div class="line">        _ctors[name] = ctor;</div><div class="line">    } <span class="keyword">finally</span> {</div><div class="line">        _lock.ExitWriteLock();</div><div class="line">    }</div><div class="line">}</div><div class="line">        </div><div class="line"><span class="keyword">public</span> T GetService&lt;T&gt;(<span class="keyword">string</span> name) {</div><div class="line">    _lock.EnterReadLock();</div><div class="line">    <span class="keyword">try</span> {</div><div class="line">        Func&lt;IServiceContainer, T&gt; ctor = _ctors[name] <span class="keyword">as</span> Func&lt;IServiceContainer, T&gt;;</div><div class="line">        <span class="keyword">return</span> ctor(<span class="keyword">this</span>);</div><div class="line">    } <span class="keyword">finally</span> {</div><div class="line">        _lock.ExitReadLock();</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>It really is just a dictionary of lambdas, and wires up thus…</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">Naiad.ServiceContainer.Instance.RegisterService(<span class="string">"request-behaviours"</span>,</div><div class="line">    container =&gt; {</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> List&lt;IProcessBehaviour&gt; {</div><div class="line">            <span class="keyword">new</span> SimpleSequenceBehaviour(<span class="string">"process-request"</span>, container.GetService&lt;List&lt;<span class="keyword">string</span>&gt;&gt;(<span class="string">"life-cycle"</span>)),</div><div class="line">            <span class="keyword">new</span> BootstrapBehaviour(<span class="string">"bootstrap"</span>,</div><div class="line">                <span class="keyword">new</span> Dictionary&lt;<span class="keyword">string</span>,<span class="keyword">string</span>&gt; {</div><div class="line">                    {<span class="string">"area"</span>, <span class="string">"default"</span>}, </div><div class="line">                    {<span class="string">"concern"</span>, <span class="string">"default"</span>},</div><div class="line">                    {<span class="string">"action"</span>, <span class="string">"default"</span>},</div><div class="line">                    {<span class="string">"app-path"</span>, <span class="string">"/web.harness"</span>}</div><div class="line">                }</div><div class="line">            ),</div><div class="line">            <span class="keyword">new</span> ParseRequestBehaviour(<span class="string">"parse-request"</span>, <span class="string">"Inversion.Web.Harness.Site"</span>),</div><div class="line">            <span class="keyword">new</span> ViewStateBehaviour(<span class="string">"view-state"</span>),</div><div class="line">            <span class="keyword">new</span> ProcessViewsBehaviour(<span class="string">"process-views"</span>),</div><div class="line">            <span class="keyword">new</span> RenderBehaviour(<span class="string">"render"</span>),</div><div class="line">            <span class="keyword">new</span> RazorViewBehaviour(<span class="string">"rzr::view"</span>),</div><div class="line">            <span class="keyword">new</span> XmlViewBehaviour(<span class="string">"xml::view"</span>, <span class="string">"text/xml"</span>),</div><div class="line">            <span class="keyword">new</span> JsonViewBehaviour(<span class="string">"json::view"</span>, <span class="string">"text/json"</span>),</div><div class="line">            <span class="keyword">new</span> XsltViewBehaviour(<span class="string">"xslt::view"</span>, <span class="string">"text/xml"</span>),</div><div class="line">            <span class="keyword">new</span> XsltViewBehaviour(<span class="string">"xsl::view"</span>, <span class="string">"text/html"</span>),</div><div class="line">            <span class="keyword">new</span> HelloWorldBehaviour(<span class="string">"work"</span>){ </div><div class="line">                MatchingAllParameters = <span class="keyword">new</span> Dictionary&lt;<span class="keyword">string</span>,<span class="keyword">string</span>&gt; {</div><div class="line">                    {<span class="string">"action"</span>, <span class="string">"hello"</span>}</div><div class="line">                }</div><div class="line">            }</div><div class="line">        };</div><div class="line">    }</div><div class="line">);</div></pre></td></tr></table></figure>
-
-<p>It isn’t much of any use except as a base-line “simplest possible thing that works” to measure more industrial strength implementations against. Just prodding it with <a href="http://httpd.apache.org/docs/2.2/programs/ab.html" target="_blank" rel="external">apache bench</a> for a ballpark it’s a whisker faster than Spring.NET, which considering the facilities Spring offers leaves me quite impressed with Spring.</p>
-<p>There’s a lot of value in returning to the simplest implementation that works as it’s easy to lose track of the cost of components that become an integral part of our applications.</p>
-<p>So there’s no misunderstanding, this is a toy. But sometimes all you need is a toy. Inversion started life as a toy, the initial prototype being a predicate/action dictionary, where the predicate acted on an event and the action acted upon a context. In scripting languages knocking prototypes up with the general purpose data structures lying around such as lists and dictionaries is very normal, and we could maybe do with it becoming more of a norm in .NET before we jump off into the deep-end with grand object-models.</p>
-<p>As I’m proofing this I can see I need to move the exit from the read lock after looking up the constructor but before executing the constructor… as I say, it’s a toy.</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      
-  
-  <div class="tags">
-    <a href="/tags/patterns/">patterns</a>, <a href="/tags/inversion/">inversion</a>
-  </div>
-
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-  
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-11-24T14:11:48.000Z"><a href="/2014/11/24/service-locator-vs-dependency-injection/">Nov 24 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/11/24/service-locator-vs-dependency-injection/">Service locator vs dependency injection.</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Or, <em>“Who would win the fight between a submarine and a tank?”</em></p>
-<p>I much enjoyed reading <a href="http://candordeveloper.com/2013/04/10/dependency-injection-is-over-hyped/" target="_blank" rel="external">a piece on service location vs dependency injection</a> which chimed with some of my own thoughts overs the years.</p>
-<p>The article starts with a quote by Martin Fowler, the brilliant man whose brilliant work has given rise to so many cargo-cult practices in the .NET development community. I say “cargo-cult” as I’m implying unreasoned and absolute application of a single principle <em>out of context</em>, to the exclusion of any nuance. It’s worth reading Fowler’s piece as it’s a very balanced take on the subject and not absolutist.</p>
-<blockquote>
-<p><a href="http://martinfowler.com/articles/injection.html" target="_blank" rel="external">Martin Fowler</a> The choice between Service Locator and Dependency Injection is less important than the principle of separating service configuration from the use of services within an application.</p>
-</blockquote>
-<p>Architecturally <a href="https://github.com/guy-murphy/inversion-dev" target="_blank" rel="external">Inversion</a> expresses service location, and it avoids any explicit use of dependency injection (DI) while at the same time assuming considerable use of DI by application developers. Given this I thought some brief word on “why” might be useful, while adding my voice of concern about the over use of DI.</p>
-<p><a href="https://github.com/guy-murphy/inversion-dev" target="_blank" rel="external">Inversion</a> favours the use of <a href="http://springframework.net/" target="_blank" rel="external">Spring</a> as it’s IoC container, and XML configuration. I’ve long intended to try out <a href="http://autofac.org/" target="_blank" rel="external">autofac</a> as it too apparently has good XML config support. As long as it has good XML config support and performs reasonably well I really don’t care which container I use, because for me the primary requirement is a config notation so I can decouple my config from service use and binary deploys, and so that I can easily manage configuration for an application in different instances.</p>
-<p>This core issue seems to get thrown out with the bath-water in near all DI using solutions I have seen in the wild. Why? Because we had a bunch of people write that service locators are an anti-pattern. Like a lot, if it passed by your notice Google <a href="https://www.google.co.uk/#q=service+locator+is+an+anti+pattern" target="_blank" rel="external">“service locator anti pattern”</a>, pick a couple of pieces and read at random for 15 min.</p>
-<p>Most of the core arguments regarding service location as an anti-pattern stress the pitfall of runtime rather than compile-time errors caused by failure to fulfill dependency requirements. This is compounded by the dependency graph being buried in implementation code. These are valid concerns, but the counter application as a blanket absolute I feel leads developers into more pitfalls than it avoids. </p>
-<p>The emphasis on compile-time errors in this argument leads the developer to favour statically-compiled container configuration, and in most cases the fluent interfaces that are emphasised by modern IoC containers. Without exception in any case I’ve observed this leads to Martin Fowler’s chief concern getting throw out with the bathwater.</p>
-<blockquote>
-<p>separating service configuration from the use of services within an application</p>
-</blockquote>
-<p>There are other more insidious issues introduced with the assumption of pervasive DI use.</p>
-<h2 id="Abusing_constructors_rather_than_abstracting">Abusing constructors rather than abstracting</h2>
-<p>At a very simple level, most examples of DI vs service location assume constructor injection. This is for the valid reason of ensuring the object is instantiated with all it’s dependencies fulfilled, and this is the fig leaf we use to explain this approach. The truth is a little buried anti-pattern in itself.</p>
-<p>Dependencies will often vary for different implementations, so what we need to inject varies. The constructor is effectively a big gaping hole in a types interface contract. We can run anything we want through there, and they can vary between implementations. So rather than abstract our dependencies we just throw them through the contructor. This is not a virtue.</p>
-<p>In the world of .NET Blog Driven Development combined with MVC.NET and Entity Framework this leads over the course of years almost inexorably to the magic tarball of a dependency graph with all the things touching all the things and the contructor being the means by which we communicate relationships between objects.</p>
-<h2 id="Assumptions_about_state">Assumptions about state</h2>
-<p>This abuse of constructors as a hole through our interfaces leads us to another problem.</p>
-<p>It makes a huge assumption about the state of my type, and will almost compel inexperienced developers to inflict state upon types that don’t need it. We without thought turn a <strong>uses-a</strong> relationship into a <strong>has-a</strong> relationship and ensure we can’t use singletons where appropriate, and steers us away from a swathe of compositional patterns.</p>
-<p>This is a big deal for performance in web-applications, and almost ensures while we model relationships between data entities, we don’t model behavioural relationships between objects or pay much of any attention toward how objects use each other.</p>
-<h2 id="Writing_assemblies_to_be_consumed_by_others">Writing assemblies to be consumed by others</h2>
-<p>The flaming strawman of a horror story that the notion of an anti-pattern is built on is the story of shipping an assembly to a third-party that’s using a service locator, with a dependency that isn’t fulfilled in the config, causing a runtime error that isn’t easy for the consumer to resolve as the dependency is expressed in configuration code.</p>
-<p>I call this a strawman as using a service locator in this way for a shipping lib is a complete non-starter. The concern is applicable for any low-level or foundation assembly (as most of us are not shipping libs).</p>
-<p><a href="https://github.com/guy-murphy/conclave-public/tree/master/Conclave.Map" target="_blank" rel="external">Conclave.Map</a> and related assemblies have no notion of a service container or locator. It’s part of a data-access layer, and service location is none of its business. Nobody in their right mind is going to suggest injecting a service locator into something that isn’t participating in a component model. It may have a database connection however.</p>
-<p>In WinForms a service container is threaded through all the components, because they are participating in a component model. The IO namespaces aren’t because they’re not participating in a component model.</p>
-<p>Yes, there are a whole bunch of concerns that should not be addressing service location. There’s a whole bunch of types that shouldn’t have access to the application config at all, that should be agnostic to their environment. Your data access layer probably shouldn’t know anything about HTML or CSS… but that does not make HTML and CSS anti-patterns, it is simply to know that as professionals we make judgment about how we partition concerns within our application while being mindful of principles like <a href="http://en.wikipedia.org/wiki/Law_of_Demeter" target="_blank" rel="external">The Law of Demeter</a> we understand we need to manage carefully the coupling between types.</p>
-<p>If however a types responsibility is coordinating between services, and providing application integration with services, then service location is a perfectly reasonable concern, and trying to pretend otherwise because somebody called it an anti-pattern will bend your application out of shape.</p>
-<h2 id="Patterns_are_not_universally_applicable_articles_of_faith">Patterns are not universally applicable articles of faith</h2>
-<p>Patterns are not <a href="http://en.wikipedia.org/wiki/Catechism" target="_blank" rel="external">catechisms</a>, and they do not direct a moral imperative. Patterns offer solutions to common problems and bring with them their own consequence that will vary between scenarios of application.</p>
-<p>Consider message queues. Not unlike service locators they introduce a fire-break of an interface decoupling, taking a lot of of stuff that used to happen <em>here</em> and by whatever means makes it happen over <em>there</em>. Quite where or how often isn’t the business of the application developer looking at one end of it.</p>
-<p>Should we wire in a service locator into a low level PDF library that is not participating in a component model? Probably not, for all the same reasons we probably shouldn’t wire in a message queue.</p>
-<p>Is this to say then that message queues are an anti-pattern? No, it’s to say you’re a muppet if you wire a domestic power cable from the wall outlet into your wrist-watch to power it. Not because domestic power cables and wall outlets are bad or antithetical, but because if you insist on wiring in power cables in <em>inappropriate</em> ways, you’re going to get an electric shock and will probably render your watch inoperable.</p>
-<p>Take 3 Java developers and 3 .NET developers to an imaginary bar in our heads. They’re going to write down an exhaustive list of all the ways in which it is appropriate or inappropriate to use a message queue. Once the Java and .NET devs are done introduce 3 Erlang developers, and there’s going to be a bar fight. This is because an Erlang developer is going to have a completely different architectural take on where it is appropriate to use messaging.</p>
-<p>This might seem a bit of a contrived example unless you are a .NET developer using <a href="https://rx.codeplex.com/" target="_blank" rel="external">Rx.NET</a> or <a href="http://msdn.microsoft.com/en-us/library/hh228603.aspx" target="_blank" rel="external">DataFlow</a> in anger. In which case your notions of inter-object communication is probably drifting slowly toward the Erlang chaps and you might surprise your peers by joining the Erlang devs in the ensuing ruck. Further shocking the Java devs when one of their own screams “Scala!” and turns on them… Now throw in 3 Haskel devs and all bets are off. They’re likely to label your whole type-system an anti-pattern… When we look under the table we find a Rails dev rocking themselves whimpering “I just want to build awesome websites”.</p>
-<p>As a .NET dev I may favour compile time errors over runtime errors more than say a Python or Ruby developer, but <em>if I am creating a component model that composes at runtime</em>, and I try and eliminate runtime errors as a blanket architectural rule, then I am likely to bend my architecture out of shape.</p>
-<h2 id="Using_a_process_context_for_service_location">Using a process context for service location</h2>
-<p>So how does <a href="https://github.com/guy-murphy/inversion-dev" target="_blank" rel="external">Inversion</a> and <a href="https://github.com/guy-murphy/conclave-public" target="_blank" rel="external">Conclave</a> approach this? Hopefully with a sense of balance, and an awareness of when the focus is service location and when the focus is dependency injection, with a cut between the two at the appropriate layer for the application to separate its concerns.</p>
-<p>Inversion centres around <a href="https://github.com/guy-murphy/inversion-dev/blob/master/Inversion.Process/ProcessContext.cs" target="_blank" rel="external">process context</a> in much the same way that an ASP.NET application will centre around a <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontext.aspx" target="_blank" rel="external">HttpContext</a>. This context is used to manage state for a running process and to mediate with actors and resources external to the application. The process context is also responsible for mediating between units of application and business logic, coordinating their activity.</p>
-<p>The context <strong>has-a</strong> service container, which is injected in it’s constructor. This interface is held for all process context implementations. If I could specify the constructor on the interface I would (I might take a closer look at the MS design by contract library for .NET).</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="title">ProcessContext</span>(IServiceContainer services) {</div><div class="line">    _serviceContainer = services;</div><div class="line">    <span class="comment">// snip</span></div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">public</span> IServiceContainer Services {</div><div class="line">    <span class="keyword">get</span> { <span class="keyword">return</span> _serviceContainer; }</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>Which is completely unremarkable. Slightly more controversial is the interface for <code>IServiceContainer</code>.</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">interface</span> IServiceContainer : IDisposable {</div><div class="line">    T GetService&lt;T&gt;(<span class="keyword">string</span> name);</div><div class="line">    <span class="keyword">bool</span> ContainsService(<span class="keyword">string</span> name);</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>This is perhaps slightly controversial as its getting services by name rather than by type. This is because at this level the concern is service location via a generalised component interface. If the service container being used supports DI (and it will), injection is configuration level concern. The component isn’t going to inflict it’s dependency upon the application architecture.</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Action</span>(IEvent ev, ProcessContext context) {</div><div class="line">    <span class="keyword">if</span> (ev.HasRequiredParams(<span class="string">"id"</span>)) {</div><div class="line">        <span class="keyword">using</span> (ITopicStore store = context.Services.GetService&lt;ITopicStore&gt;(<span class="string">"store::topic-map"</span>)) {</div><div class="line">            store.Start();</div><div class="line">            Topic topic = store.GetTopic(ev[<span class="string">"id"</span>]);</div><div class="line">            context.ControlState[<span class="string">"topic"</span>] = topic;</div><div class="line">            ev.Object = topic;</div><div class="line">            <span class="keyword">if</span> (topic == Topic.Blank) {</div><div class="line">                context.Errors.CreateMessage(...);</div><div class="line">            }</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>So here we have the action of an <a href="https://github.com/guy-murphy/inversion-dev/blob/master/Inversion.Process/IProcessBehaviour.cs" target="_blank" rel="external">IProcessBehaviour</a>. It uses the same interface as all process behaviours, it’s not a special little snowflake, and plugs into the architecture the same as every other component.</p>
-<p>Crucially… this behaviour <strong>uses</strong> a context which <strong>has</strong> a service locator which this behaviour <strong>uses</strong> to obtain a topic store.</p>
-<p>The behaviour, and all the other behaviours like it have naff all. The process context has everything. Any immutable config for the behaviour is injected by the service container from which the behaviour is obtained, and is a config level concern that remains the business of the behaviours author and for them to worry about. DI in this way is not the business, nor the concern of the framework. Service location is, and is provided via an interface on the context that can be implemented inside 10 minutes as a dictionary of lambdas if you had a pressing need.</p>
-<h2 id="Service_location_and_dependency_injection_are_different_things">Service location and dependency injection are different things</h2>
-<p>Obtaining a manifest from a database at runtime of service component names that conform to a generalised interface, obtaining them from the service container by name, and then executing them is the concern of a service locator, not DI. It’s not about one being better than the other, it’s about them being concerned with different things. Service location has an architectural impact on patterns of application composition. DI has an impact on configuring object instantiation.</p>
-<p>The reason the two streams get crossed is that every DI offering that I have come across is built upon and predicated by a service locator. DI is one pattern that can be implemented with a service locator. So in almost every case you’re going to come across the two things in the same place called a “service container”. Use of service location will naturally co-mingle with DI, because reasoned use of DI is a wonderful thing, and shields our application from a lot of instantiation details, keeping them firmly ring-fenced as config.</p>
-<p>To suggest that service location is an anti-pattern and DI is the one pattern (built upon service location) for all the things, is cargo-cultish.</p>
-<p>Inversion and Conclave express service location and assume you will use whatever DI takes your fancy. What service locator and DI you choose to use is not my concern and should not impact the architecture.</p>
-<h2 id="Looking-up_stuff">Looking-up stuff</h2>
-<p>We as developers out of necessity seek guiding principles to inform our daily work. This isn’t exclusive to IT, we do it in all aspects of life. “A stitch in time saves nine”, is a truism that we may all find ourselves nodding to as its a useful sentiment. As is “measure twice, cut once” and “more speed less haste” despite there being subtle tensions between such truisms. They are useful principles. Their application requires wisdom and judgment. They are useful models, they are not innate laws of the cosmos… The map is not the terrain.</p>
-<p>The assertion that service location is an anti-pattern masks consideration and balance of an underlying concern which I shall grandly entitle “looking-up stuff”. The issue isn’t one of service locators, database connections, sockets or access to the file-system. The issue is whether an operation should be looking up information external to itself, or whether it should be acting on only the information passed to it. Related to this, but beyond the scope of this piece is whether an operation should be yielding side-effects, and if it should, how they are managed.</p>
-<p>There isn’t a simple answer to this concern because what is appropriate is contextual and determined by what the components role is whithin the broader system. Should my component pull information from an outside source, or should it be given that information? Should my parser be a <a href="https://www.google.co.uk/#q=pull+push+parser" target="_blank" rel="external">pull or push parser?</a> Whatever you decide is appropriate it is probably silly to call pull-parsing an anti-pattern when your push-parser has probably been built on top of one, despite the fact that in most cases you should probably be using a push-parser.</p>
-<p>There is no universally applicable principle that will ensure we wear the mantle of “good developer”. There is no abdicating responsibility for the decisions we need to make not just as a programmers, but as system analysts even if you call yourself a developer. I become concerned when blanket truths replace consideration of context.</p>
-<p>Service location is not an anti-pattern. There are anti-patterns that <strong>involve</strong> use of a service locator along with other similar constructs. There are anti patterns that involve the use of DI. Most devises we use in programming involve both (virtuous) patterns, and anti-patterns, which is really just a grand way of saying pros and cons. Generally speaking people who summarise the world in terms of only pros or only cons are said to be engaging in <a href="http://en.wikipedia.org/wiki/Splitting_(psychology%29" target="_blank" rel="external">splitting</a>.</p>
-<blockquote>
-<p>Splitting (also called black and white thinking or all-or-nothing thinking) is the failure in a person’s thinking to bring together both positive and negative qualities of the self and others into a cohesive, realistic whole. It is a common defense mechanism used by many people. The individual tends to think in extremes (i.e., an individual’s actions and motivations are all good or all bad with no middle ground.)</p>
-</blockquote>
-<p>I need to take a look about and see what discussions there may be on the subject of polarised views and whether they are more prevalent among programmers than other professions.</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      
-  
-  <div class="tags">
-    <a href="/tags/patterns/">patterns</a>, <a href="/tags/inversion/">inversion</a>
-  </div>
-
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-  
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-11-18T03:15:01.000Z"><a href="/2014/11/18/introducing-inversion/">Nov 18 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/11/18/introducing-inversion/">Introducing Inversion.</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p><a href="https://github.com/guy-murphy/conclave-public" target="_blank" rel="external">Conclave</a> originally began life around 2004 as a .NET CMS built around <a href="http://en.wikipedia.org/wiki/Topic_Maps" target="_blank" rel="external">topicmaps</a>, and influenced heavily by the <a href="http://c2.com/cgi/wiki/wiki?WikiWikiWeb" target="_blank" rel="external">WikiWikiWeb</a>. It was a lot of fun but a personal side project, and was a little slow and clunky.</p>
-<p>The next incarnation in 2006 was Acumen a .NET MVC web-application framework and CMS built with a team in Spain. Multi-tenant, multi-lingual and driving a couple of dozen public facing and internal extranet applications, Acumen was so much fun to develop and an incredible learning experience.</p>
-<p>More recently in 2011 I began working on a behaviour oriented framework the purpose of which was to replace MVC within Conclave, so that feature-set just got rolled into Conclave. This left Conclave very schizophrenic and almost impossible to explain to any uninvolved person. Conclave simply seemed to be too many things.</p>
-<p>So. The behavioural composition malarkey has been taken out of Conclave and is now <a href="https://github.com/guy-murphy/inversion-dev" target="_blank" rel="external">Inversion</a>. Conclave.CMS and Conclave.Funder will then simply be applications that use Inversion rather than being joined at the hip. This it is hoped will help keep our separation of concerns a little more honest.</p>
-<p>Over the course of the Winter I’ll write some more about Inversion and it’s design goals.</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      
-  
-  <div class="tags">
-    <a href="/tags/inversion/">inversion</a>
-  </div>
-
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-  
-
-  <nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav>
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
@@ -721,7 +372,7 @@ var disqus_shortname = 'guy-murphy';
   var dsq = document.createElement('script');
   dsq.type = 'text/javascript';
   dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 }());
 </script>
