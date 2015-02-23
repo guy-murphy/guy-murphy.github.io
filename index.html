@@ -52,6 +52,135 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2015-02-05T04:21:48.000Z"><a href="/2015/02/05/Configuring-behaviour-in-Inversion-Part-2/">Feb 5 2015</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/02/05/Configuring-behaviour-in-Inversion-Part-2/">Configuring behaviour in Inversion: Part 2</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Previous: <a href="http://guy-murphy.github.io/2015/01/20/Configuring-behaviour-in-Inversion/" target="_blank" rel="external">Configuring behaviour in Inversion</a></p>
+<p>In the last article I talked about the how and why of implementing behaviour configuration in Inversion. When I reviewed the work I surmised that it was a qualified success with some work remaining to do before the matter could be put to bed entirely.</p>
+<blockquote>
+<p>With the original implementation there was a lot of pressure to inherit from various classes in order to inherit some of their configuration features. This caused a lot of strain on inheritance.</p>
+<p>With the move to a common data-structure for configuration we took away pressure from inheriting to gain varying configuration properties.</p>
+<p>With the move to predicates as methods extending IConfiguredBehaviour we took pressure away from having to inherit from a particular class in order to pick up it’s condition predicates.</p>
+<p>What we didn’t escape was the need to actually use these predicates in a condition, therefore making it desirable to inherit from some classes in order to obtain the checks they perform in their condition.</p>
+<p>So this is really a 2 out of 3 in this regard. We have relieved pressure from inheritance in quite a marked way, but there remains an impediment that will require more thought and work.</p>
+</blockquote>
+<p>The basic mechanism for addressing this wasn’t really the issue, uncertainty was where such a mechanism should reside.</p>
+<blockquote>
+<p>The issue isn’t implementing the lookup of predicate strategies, it can be as simple as a dictionary of lambdas, the cause for concern is where to define this, and where to inject it. Which object should be responsible for maintaining this lookup? It probably fits well enough on the context, but it would require the context to hold implementation details of behaviours, and I want to think about that some.</p>
+</blockquote>
+<p>This follow-up article will talk about how progress was made with this remaining area extending selection strategies for behaviours, with a focus on “open for extension but closed for modification”.</p>
+<h2 id="Selection_criteria">Selection criteria</h2>
+<p>One of the concepts that was firming up was the idea of <em>selection criteria</em> which was a predicate acting upon a configuration and event to determine if a behaviours condition was a match. Last time these were implemented as extension methods for <code>IConfiguredBehaviour</code> which were nice in that it was easy to add new selection criteria without having to change anything. The problem remaining with them was that conditions still needed to <em>know about and use them</em>. The <em>uses-a</em> relationship between behaviours and their selection criteria was not open for easy extension. The use of selection criteria was “hard coded”, and required use of inheritance to override, which is something we were trying to avoid as we prefer “composition over inheritance for application behaviour”.</p>
+<p>By the end of the last piece we had a reasonably firm idea that we wanted to inject selection criteria into behaviours as strategies to be used by conditions without the conditions knowing about the strategies other than their general shape and how to use them. The details or purpose of a strategy not being important to a behaviour which is just concerned whether or not its selection criteria pass or fail.</p>
+<p>So the first order of business was to make selection criteria a thing:-</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">delegate</span> <span class="keyword">bool</span> <span class="title">SelectionCriteria</span>(IConfiguration config, IEvent ev);</div></pre></td></tr></table></figure>
+
+<p>A function that acts upon an <code>IConfiguration</code> and <code>IEvent</code>, and returns a <code>bool</code>. This allows us to move our use of extension methods to lambda expressions which are easy to store and inject:-</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(config, ev) =&gt; ev.HasParams(config.GetNames(<span class="string">"event"</span>, <span class="string">"has"</span>))</div></pre></td></tr></table></figure>
+
+<p>If a behaviour as part of it’s configuration were injected with a set of these <code>SelectionCriteria</code> a behaviour during it’s condition check could simply check that each of these criteria returns <code>true</code>. We would be able to effectively inject a behaviours condition implementation.</p>
+<p>That bit was easy… But how do we decide what to inject into a behaviour?</p>
+<h2 id="Stuff_what_selects_stuff_what_selects_stuff">Stuff what selects stuff what selects stuff</h2>
+<p>Then I fell off a conceptual cliff.</p>
+<p>How to decide what stuff to inject?.. I spent most of a morning trying to formalise an expression of <em>“stuff what selects stuff what selects stuff”</em> that didn’t make me sound like a cretin. I’d walk into my garden and sit, think of a compositional pattern, run to my studio and find I’d laid down a bunch of things that all sounded the same the distinctions between which seemed very arbitrary.</p>
+<p>The darkest 15 minutes of that morning was the brief period when I considered using behaviours to configure behaviours, and started seeing behaviours all the way down.</p>
+<p>The reason for my anxiety is I was becoming convinced that I was starting to commit a cardinal sin of application architects which is the sin of the <a href="composition over inheritance for application behaviour">Golden Hammer</a>.</p>
+<blockquote>
+<p>The concept known as the law of the instrument, Maslow’s hammer, Gavel or a golden hammer[a] is an over-reliance on a familiar tool; as Abraham Maslow said in 1966, “I suppose it is tempting, if the only tool you have is a hammer, to treat everything as if it were a nail.”</p>
+</blockquote>
+<p>The pull of the Golden Hammer for the architect is almost inexorable as the core concern of the architect is too look for common patterns of structure and behaviour, to move from a diverging variety of abstractions to converging use of abstractions. When you get a hold of an implementation of a pattern that is producing good results for you, it is very hard to avoid seeing that pattern everywhere.</p>
+<p>It’s also one of the primary mechanisms by which we turn our architectural cathedrals into slag heaps. It’s destructive because it represents the building of an increasingly strong bias about the applicability of an abstraction, that leads to poor judgment and the inappropriate application of abstractions. I call it a sin because its seductive, difficult to avoid, is always recurring, and has bad consequences in the long term while feeling  good in the short term.</p>
+<p>I knew I was seeing the modeling of <em>condition/action</em> pairs everywhere, that this was part of a protracted phase I’m going through, and that I was vulnerable to the hubris of the Golden Hammer.</p>
+<p>I also knew that some patterns are foundational and do have broad applicability. I don’t find the promiscuous use of <em>key/value</em> pairs or <code>IEnumerable&lt;T&gt;</code> anxiety provoking use of a Golden Hammer, and <em>condition/action</em> is as foundational as an <code>if</code> statement.</p>
+<p>The rest of the morning was spent giving a performance of Gollum (from Lord of the Rings) as an application architect having an argument with himself about the semantics of <em>stuff</em> and <em>select</em> while anxious about getting hit by a hammer.</p>
+<h2 id="An_optional_extension_of_the_existing_framework">An optional extension of the existing framework</h2>
+<p>I broke out of this neurotic circular argument with myself by deciding that I would implement the abstraction of <em>stuff what selects stuff what selects stuff</em> as a straight-up extension of the existing framework without altering any of the existing types or their implementations. If I could do this then if it became apparent that the abstraction or its implementation was ill-conceived (as it felt it might be) it could remain an odd appendix of an experiment that could be removed at some point without any negative impact on the broader framework… If the extension sucked it simply wouldn’t get used… And I wouldn’t write about it.</p>
+<p>It’s worth drawing attention to this benefit of implementing features as extensions.</p>
+<p>When we talk about extensibility being good, and consider things like open for extension but closed for modification we tend to view it from the angle of this concern making the writing of extensions easier. The benefit that doesn’t get considered perhaps quite as much is that this approach of extending what is without modifying it is also a strategy for mitigating risk. It makes it easier to move away from such extensions if they’re poorly conceived with reduced consequence to the rest of the framework.</p>
+<p>This is one of the goals of Inversion. Development by extension, with an ability to evolve and move poorly conceived abstractions toward increasingly better abstractions. The ability to experiment which is to say, try out different approaches, needs to be facilitated or our systems can’t evolve and we will never get past either cycles of system rewrites, or legacies of poor judgment which we can’t escape. Extensibility in this way is a strategy for easing the paying down of technical debt in the future or lowering the interest rates for technical debt if you like.</p>
+<h2 id="Say_what_you_see">Say what you see</h2>
+<p>So the worst case scenario was an odd bit of code that Guy wrote one day that Adam laughed at. There wasn’t a risk of reverting anything, and my anxiety was removed, making clear quite a short and easy path to a solution.</p>
+<p>Once I decided I was losing the war of semantics and came to terms with my caveman-like expression of the problem, it was easy to start breaking it down.</p>
+<p><em>stuff that selects stuff that selects stuff</em></p>
+<p>I know how primitive that is, but it’s what I had… We’re going to look at a configuration, and on the basis of what we see there, we’re going to pick a bunch of selection criteria that a behaviour will use in its condition.</p>
+<p>We have the last bit, the <code>SelectionCriteria</code>. The first bit is a match that can be expressed as a predicate acting upon an <code>IConfiguration</code>.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// stuff what selects, stuff what selects stuff</span></div><div class="line">(Predicate&lt;IConfiguration&gt; match, SelectionCriteria criteria)</div></pre></td></tr></table></figure>
+
+<p>This concern pivots around a behaviours configuration with selection criteria being picked on the basis of the configurations characteristics. So if for example a behaviour configuration contains the tuple <code>(&quot;event&quot;, &quot;has&quot;)</code> the predicate that matches this would be associated with the <code>SelectionCriteria</code> to act on this as part of the behaviours condition.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">match: (config) =&gt; config.Has(<span class="string">"event"</span>, <span class="string">"has"</span>),</div><div class="line">criteria: (config, ev) =&gt; ev.HasParams(config.GetNames(<span class="string">"event"</span>, <span class="string">"has"</span>))</div></pre></td></tr></table></figure>
+
+<p>Struggling with semantics as I was, I decided to simply call this association of two predicates a <em>case</em>.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">interface</span> IPrototypeCase {</div><div class="line">    Predicate&lt;IConfiguration&gt; Match { <span class="keyword">get</span>; }</div><div class="line">    SelectionCriteria Criteria { <span class="keyword">get</span>; }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>This picking of selection criteria consults only the configuration and given that the behaviour configuration is immutable, this picking can take place when the configuration is instantiated, and would only need only need to expose the selection criteria that had been picked. This was done by extending <code>IConfiguration</code> thus:-</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">interface</span> IPrototype : IConfiguration {</div><div class="line">    IEnumerable&lt;SelectionCriteria&gt; Criteria { <span class="keyword">get</span>; }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>Similarly constrained in terms of semantic inspiration this extension of the behaviours configuration was called a <em>prototype</em>. I was thinking in terms of <a href="http://en.wikipedia.org/wiki/Prototype-based_programming" target="_blank" rel="external">prototype-based programming</a> which I’d had some success in the past with classification, inheritance, and overriding of relational data, and was thinking of a behaviours configuration tuples with associated functions as prototypes. Not the best example of prototypes, but vaguely in the ballpark, I needed to call it something and had lost patience with my own semantic angst. I was ready to call this thing “Nigel” if it allowed me to move on, and <code>Prototype</code> kind of fit.</p>
+<p>A prototype is a configuration that expresses selection criteria that have been chosen for that configuration.</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> ConcurrentDictionary&lt;<span class="keyword">string</span>, IPrototypeCase&gt; NamedCases = <span class="keyword">new</span> ConcurrentDictionary&lt;<span class="keyword">string</span>, IPrototypeCase&gt;(); </div><div class="line">  </div><div class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> ImmutableHashSet&lt;SelectionCriteria&gt; _criteria; </div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="title">Prototype</span>(</div><div class="line">        IEnumerable&lt;IConfigurationElement&gt; config, </div><div class="line">        IEnumerable&lt;IPrototypeCase&gt; cases</div><div class="line">) : <span class="title">base</span>(config) {</div><div class="line">    <span class="keyword">var</span> builder = ImmutableHashSet.CreateBuilder&lt;SelectionCriteria&gt;();</div><div class="line">    <span class="keyword">foreach</span> (IPrototypeCase @<span class="keyword">case</span> <span class="keyword">in</span> cases) {</div><div class="line">        <span class="keyword">if</span> (@<span class="keyword">case</span>.Match(<span class="keyword">this</span>)) builder.Add(@<span class="keyword">case</span>.Criteria);</div><div class="line">    }</div><div class="line">    _criteria = builder.ToImmutable();</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>This allows us to establish a base set of selection criteria out of the box, that is easy for application developers to override, as seen in <a href="https://github.com/guy-murphy/inversion-dev/blob/master/Inversion.Process/Behaviour/Prototype.cs" target="_blank" rel="external">Prototype</a> thus:-</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">NamedCases[<span class="string">"event-has"</span>] = <span class="keyword">new</span> Case(</div><div class="line">    match: (config) =&gt; config.Has(<span class="string">"event"</span>, <span class="string">"has"</span>),</div><div class="line">    criteria: (config, ev) =&gt; ev.HasParams(config.GetNames(<span class="string">"event"</span>, <span class="string">"has"</span>))</div><div class="line">);</div><div class="line">NamedCases[<span class="string">"event-match"</span>] = <span class="keyword">new</span> Case(</div><div class="line">    match: (config) =&gt; config.Has(<span class="string">"event"</span>, <span class="string">"match"</span>),</div><div class="line">    criteria: (config, ev) =&gt; ev.HasParamValues(config.GetMap(<span class="string">"event"</span>, <span class="string">"match"</span>))</div><div class="line">);</div><div class="line">NamedCases[<span class="string">"context-has"</span>] = <span class="keyword">new</span> Case(</div><div class="line">    match: (config) =&gt; config.Has(<span class="string">"context"</span>, <span class="string">"has"</span>),</div><div class="line">    criteria: (config, ev) =&gt; ev.Context.HasParams(config.GetNames(<span class="string">"context"</span>, <span class="string">"has"</span>))</div><div class="line">);</div><div class="line">NamedCases[<span class="string">"context-match"</span>] = <span class="keyword">new</span> Case(</div><div class="line">    match: (config) =&gt; config.Has(<span class="string">"context"</span>, <span class="string">"match"</span>),</div><div class="line">    criteria: (config, ev) =&gt; ev.Context.HasParamValues(config.GetMap(<span class="string">"context"</span>, <span class="string">"match"</span>))</div><div class="line">);</div><div class="line"><span class="comment">// and so om</span></div></pre></td></tr></table></figure>
+
+<p>We can then see this being <em>used</em> in <a href="https://github.com/guy-murphy/inversion-dev/blob/master/Inversion.Process/Behaviour/PrototypedBehaviour.cs" target="_blank" rel="external">PrototypedBehaviour</a>:-</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">bool</span> <span class="title">Condition</span>(IEvent ev, IProcessContext context) { </div><div class="line">    <span class="keyword">return</span> <span class="keyword">base</span>.Condition(ev, context) && </div><div class="line">    <span class="keyword">this</span>.Prototype.Criteria.All(criteria =&gt; criteria(<span class="keyword">this</span>.Configuration, ev)); </div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>This now forms a solid base class that is open for extension. We have relieved the pressure from having to inherit from a particular class in order to inherit its selection criteria which are now picked at during the behaviours instantiation, based upon the shape of the behaviours configuration. This extension is implemented as an extension of the behaviours configuration which is the focus of its concern and action.</p>
+<p>The added benefit of this is because only applicable selection criteria are picked for a behaviour, we’re never running redundant selection criteria as part of a condition. This in turn means we can grow our implementations of selection criteria without concern the concern of a performance impact from redundant checks. Because behaviours are singletons, this selection process takes place just once for each behaviour, so it scales nicely as the surface area of our selection criteria increases over time.</p>
+<p>Another way of thinking of this injection of strategies, is to compose or “mixin” at run-time applicable implementation details based upon configuration.</p>
+<p>A side benefit of this work apart from making it easier to extend behaviours without having to introduce new types, is that we picked up an extra 5% to 10% performance with the loss of redundant selection criteria.</p>
+<h2 id="The_abuse_of_static_members_and_future_work">The abuse of static members and future work</h2>
+<p>The maintenance of <code>NamedCases</code> as a static member of <code>Prototype</code> is a bad thing. Initialising the default cases from the <code>Prototype</code> static constructor is a doubly bad thing. Lastly, this is mutable data being maintained as a static member, so I’m going straight to hell for sure.</p>
+<p>It’s not because “global state is bad”, because it’s not. The notion that global state is bad requires ignoring the use of a database, file-system, configuration, service container, or getting the time from the system. The maintenance of <em>non-global</em> state globally is bad, and I’m not sure to what degree it can be said that these default cases are global.</p>
+<p>In maintaining the cases like this I’m needlessly tying the default implementation of selection criteria to the <code>Prototype</code> class, and I wonder if it should be associated with the behaviours type. I’m not sure yet.</p>
+<p>The strongest case for not maintaining the named cases as a static is because we don’t need to.</p>
+<p>Behaviours are used as singletons so these cases can sit as instance members of either the prototype of a behaviour or the behaviour itself, but I’m not entirely sure where I want to place this concern yet, and at the moment I’m trying to impact prior work as little as possible.</p>
+<p>The cases are injected via this constructor:-</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="title">Prototype</span>(</div><div class="line">    IEnumerable&lt;IConfigurationElement&gt; config, </div><div class="line">    IEnumerable&lt;IPrototypeCase&gt; cases</div><div class="line">)</div></pre></td></tr></table></figure>
+
+<p>So I can easily kill the static members and inject the prototype from the behaviours constructor.</p>
+<p>As is probably clear from this write-up, I struggled conceptually a couple of times through this process. The simplest possible thing at this point is not just desirable, but needful, and the simplest possible way of injecting a prototypes cases is:-</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="title">Prototype</span>(IEnumerable&lt;IConfigurationElement&gt; config): </div><div class="line">    <span class="title">this</span>(config, Prototype.NamedCases.Values) {}</div></pre></td></tr></table></figure>
+
+<p>In the last post on behaviour configuration I stopped having solved two out of three parts of a problem. If I had continued without time to simply think the abstraction over I would have started making things worse rather than better. I find it personally crucially important to recognise when I am approaching this point. Much of my worst code has been done past the point when I should have simply stopped, regrouped my mental faculties, gained some perspective, sought outside opinions, and contemplated my options weighing their pros and cons for more than 2 minutes.</p>
+<p>Invariably when I continue past where I should have prudently stopped it has involved my own vanity and a concern about what other developers and architects would think of me. Being aware of one or more deficiencies in my code, often aware that I am at risk of running afoul of one or more anti-patterns, I over-extend myself because I fear being called a “bad developer”… There’s a self defeating vicious cycle in this… I have never, nor am I ever likely to finish a piece of work that is perfect. Every single piece of work I complete will be flawed, and if I don’t come to terms with that I will over extend my self each time and turn good work into bad.</p>
+<p>When I accept that my work will iteratively improve a situation but at each iteration be left with flaws, I can then look to recognise and manage those flaws. I can establish my contingencies, and I can plan a safe and pragmatic route of improving abstractions.</p>
+<p>The remaining problem of being able to inject selection criteria into behaviours on the basis of their configuration in a manner that other developers can easily extend to meet their own needs, and without changing the preexisting framework has been accomplished. There is the uncomfortable hang-nail of <code>NamedCases</code> being a static member, but it’s safe where it’s parked and easy to move away from without negative impact. So this is where this iteration should end. I need to now let this abstraction bed in, ensure it doesn’t have any unintended consequences before anointing it and baking it into the framework any further.</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      
+  
+  <div class="tags">
+    <a href="/tags/inversion/">inversion</a>, <a href="/tags/patterns/">patterns</a>
+  </div>
+
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2015-01-20T11:41:30.000Z"><a href="/2015/01/20/Configuring-behaviour-in-Inversion/">Jan 20 2015</a></time>
       
       
@@ -999,60 +1128,11 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-11-13T22:54:49.000Z"><a href="/2014/11/13/hello-world/">Nov 13 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/11/13/hello-world/">Hello World</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">trobuleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2>
-<h3 id="Create_a_new_post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
+  
+    <a href="/page/2/" class="alignright next">Next</a>
   
   <div class="clearfix"></div>
 </nav></div></div>
@@ -1073,9 +1153,9 @@
   
     <li><a href="/tags/blog/">blog</a><small>1</small></li>
   
-    <li><a href="/tags/inversion/">inversion</a><small>5</small></li>
+    <li><a href="/tags/inversion/">inversion</a><small>6</small></li>
   
-    <li><a href="/tags/patterns/">patterns</a><small>5</small></li>
+    <li><a href="/tags/patterns/">patterns</a><small>6</small></li>
   
     <li><a href="/tags/practice/">practice</a><small>2</small></li>
   
